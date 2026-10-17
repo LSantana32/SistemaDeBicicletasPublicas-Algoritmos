@@ -38,36 +38,5 @@ class VerticeGrafo {
             return primeraArista; 
         }
 
-        bool tieneCaminoHacia(VerticeGrafo<T>* destino) { 
-            AristaGrafo<T>* aristaActual = primeraArista;
-            while (aristaActual != nullptr) {
-                if (aristaActual->getDestino() == destino) {
-                    return true;
-                }
-                aristaActual = aristaActual->getSiguiente();
-            }
-            return false;
-        }
-
-        int cantEstacionesHasta(VerticeGrafo<T>* destino) { 
-            if (this == destino) {
-                return 0;
-            }
-
-            if (!tieneCaminoHacia(destino)) {
-                return -1; // No hay camino hacia el destino
-            }
-            
-            int count = 1; // Contamos la arista hacia el destino
-            AristaGrafo<T>* aristaActual = primeraArista;
-            while (aristaActual != nullptr) {
-                if (aristaActual->getDestino() == destino) {
-                    return count;
-                }
-                aristaActual = aristaActual->getSiguiente();
-                count++;
-            }
-        }
-
         ~VerticeGrafo() { }
 };
