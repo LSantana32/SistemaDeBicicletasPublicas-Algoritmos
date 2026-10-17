@@ -16,11 +16,11 @@ class NodoHash {
             this->siguiente = siguiente;
         }
 
-        std::string getClave() { return std::string(); }
+        std::string getClave() { return clave; }
 
-        V getDato() { return V(); }
+        V getDato() { return dato; }
 
-        NodoHash<V>* getSiguiente() { return nullptr; }
+        NodoHash<V>* getSiguiente() { return siguiente; }
 
-        void setSiguiente(NodoHash<V>* nodo) { }
+        void setSiguiente(NodoHash<V>* nodo) { siguiente = nodo; }
 };
