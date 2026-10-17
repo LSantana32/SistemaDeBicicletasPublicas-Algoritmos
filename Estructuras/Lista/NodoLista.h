@@ -12,9 +12,15 @@ class NodoLista {
             this->siguiente = siguiente;
         }
 
-        T getDato() { return T(); }
+        T getDato() { 
+            return dato;
+        }
 
-        NodoLista<T>* getSiguiente() { return nullptr; }
+        NodoLista<T>* getSiguiente() {
+            return siguiente; 
+        }
 
-        void setSiguiente(NodoLista<T>* nodo) { }
+        void setSiguiente(NodoLista<T>* nodo) {
+            siguiente = nodo;
+        }
 };

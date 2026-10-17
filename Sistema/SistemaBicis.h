@@ -41,9 +41,59 @@ class SistemaBicis {
 
         void mostrarEstadisticasDelHash() { }
 
-        int contarViajesDesdeEstacionEnRango(std::string codigo, int fechaDesde, int fechaHasta) { return 0; }
+        int contarViajesDesdeEstacionEnRango(std::string codigo, int fechaDesde, int fechaHasta) {
+            if (fechaDesde > fechaHasta) {
+                return 0;
+            }
 
-        void mostrarViajesYMinutosDeUsuario(int dni) { }
+            NodoLista<Viaje*>* actual = viajes.obtenerPrimero();
+            int cantidad = 0;
+
+            while (actual != nullptr) {
+                Viaje* viaje = actual->getDato();
+
+            if (viaje != nullptr &&
+                viaje->getEstacionOrigen() == codigo &&
+                viaje->getFecha() >= fechaDesde &&
+                viaje->getFecha() <= fechaHasta) {
+                    
+                    cantidad++;
+                }
+
+            actual = actual->getSiguiente();
+            }
+
+            return cantidad;
+        }
+
+        void mostrarViajesYMinutosDeUsuario(int dni) {
+            NodoLista<Viaje*>* actual = viajes.obtenerPrimero();
+            int totalMinutos = 0;
+            bool encontrado = false;
+
+            while (actual != nullptr) {
+                Viaje* viaje = actual->getDato();
+
+                if (viaje != nullptr && viaje->getDniUsuario() == dni) {
+                    viaje->mostrarInformacion();
+                    std::cout << "--------------------\n";
+
+                    totalMinutos += viaje->getDuracionMin();
+                    encontrado = true;
+                }
+
+                actual = actual->getSiguiente();
+            }
+
+            if (!encontrado) {
+                std::cout << "No se encontraron viajes para el DNI "
+                    << dni << ".\n";
+                return;
+            }
+
+            std::cout << "Total de minutos pedaleados: "
+                  << totalMinutos << '\n';
+        }
 
         Bicicleta* buscarBicicletaPorId(int id) { return nullptr; }
 

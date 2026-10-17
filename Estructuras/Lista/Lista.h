@@ -14,6 +14,10 @@ class Lista {
             this->largo = largo;
         }
 
+        NodoLista<T>* obtenerPrimero() {
+            return primero;
+        }
+
         void insertarEnPosicion(T dato, int posicion) { }
 
         void eliminarEnPosicion(int posicion) { }

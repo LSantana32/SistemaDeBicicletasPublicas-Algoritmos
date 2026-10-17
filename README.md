@@ -123,6 +123,20 @@ El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo,
 - Implementar una cola de espera por estación para asignar bicicletas a los usuarios en orden de llegada.
 - Implementar una cola de prioridad mediante un min-heap para gestionar las bicicletas averiadas que ingresan al taller.
 
+**Análisis de complejidad temporal y estructuras de datos**
+
+**1. Cantidad de viajes por estación y rango de fechas**
+
+**Complejidad temporal:** \(O(n)\)
+
+Se eligió una lista enlazada para almacenar los viajes porque permite recorrerlos secuencialmente sin modificar la estructura existente del sistema. Como no existe un índice que permita acceder directamente a los viajes de un usuario por su DNI, es necesario recorrer la lista completa para encontrar todos los viajes correspondientes y sumar sus duraciones. Por este motivo, la complejidad temporal es \(O(n)\), donde \(n\) representa la cantidad total de viajes almacenados.
+
+**2. Viajes de un usuario por DNI y total de minutos pedaleados**
+
+**Complejidad temporal:** \(O(n)\)
+
+Se reutilizó la lista enlazada de viajes existente, ya que permite examinar cada registro y comprobar si cumple con las condiciones de estación de origen y rango de fechas. Como no se dispone de un índice organizado por estación y fecha, en el peor caso es necesario recorrer todos los viajes para obtener la cantidad solicitada. Por lo tanto, la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
+
 **Prioridades del taller:**
 
 - Prioridad 1: máxima urgencia.
