@@ -25,7 +25,11 @@ class Estacion {
 
         std::string getCodigo() { return std::string(); }
 
-        double calcularPorcentajeOcupacion() { return 0.0; }
+        double calcularPorcentajeOcupacion() { 
+            int ocupacion = capacidadAnclajes - bicisDisponibles;
+            int porcentaje = (ocupacion * 100) / capacidadAnclajes;
+            return porcentaje; 
+        }
 
         bool retirarBicicleta(int dni) { return false; }
 

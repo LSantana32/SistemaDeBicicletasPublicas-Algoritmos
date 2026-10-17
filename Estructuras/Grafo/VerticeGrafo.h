@@ -26,7 +26,48 @@ class VerticeGrafo {
 
         void eliminarAristaHacia(VerticeGrafo<T>* destino) { }
 
-        AristaGrafo<T>* getPrimeraArista() { return nullptr; }
+        void setVisitado(bool visitado) { 
+            this->visitado = visitado; 
+        }
+
+        bool getVisitado() { 
+            return visitado; 
+        }
+
+        AristaGrafo<T>* getPrimeraArista() { 
+            return primeraArista; 
+        }
+
+        bool tieneCaminoHacia(VerticeGrafo<T>* destino) { 
+            AristaGrafo<T>* aristaActual = primeraArista;
+            while (aristaActual != nullptr) {
+                if (aristaActual->getDestino() == destino) {
+                    return true;
+                }
+                aristaActual = aristaActual->getSiguiente();
+            }
+            return false;
+        }
+
+        int cantEstacionesHasta(VerticeGrafo<T>* destino) { 
+            if (this == destino) {
+                return 0;
+            }
+
+            if (!tieneCaminoHacia(destino)) {
+                return -1; // No hay camino hacia el destino
+            }
+            
+            int count = 1; // Contamos la arista hacia el destino
+            AristaGrafo<T>* aristaActual = primeraArista;
+            while (aristaActual != nullptr) {
+                if (aristaActual->getDestino() == destino) {
+                    return count;
+                }
+                aristaActual = aristaActual->getSiguiente();
+                count++;
+            }
+        }
 
         ~VerticeGrafo() { }
 };
