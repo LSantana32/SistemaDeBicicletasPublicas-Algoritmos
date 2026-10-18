@@ -28,6 +28,10 @@ public:
 
     std::string getCodigo() { return std::string(); }
 
+    int getCapacidadAnclajes() { return capacidadAnclajes; }
+
+    int getBicisDisponibles() { return bicisDisponibles; }
+
     double calcularPorcentajeOcupacion() { return 0.0; }
 
     bool retirarBicicleta(int dni) { return false; }
