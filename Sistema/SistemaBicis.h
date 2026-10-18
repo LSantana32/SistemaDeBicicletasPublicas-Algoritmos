@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 
 #include "../Estructuras/TablaHash/TablaHash.h"
 #include "../Estructuras/Lista/Lista.h"
@@ -21,17 +22,43 @@ class SistemaBicis {
         HeapMin<Bicicleta*> taller;
 
     public:
-        SistemaBicis(TablaHash<Estacion*> estaciones, Lista<Viaje*> viajes, Grafo<std::string> ciclovias, ABB<int, Bicicleta*> bicicletas, HeapMin<Bicicleta*> taller)
-            : estaciones(estaciones), viajes(viajes), ciclovias(ciclovias), bicicletas(bicicletas), taller(taller) {
+        SistemaBicis()
+            : estaciones(101), viajes(nullptr, 0), ciclovias(nullptr, 0), bicicletas(nullptr, 0), taller(nullptr, 0, 0) {
         }
 
         void cargarDatosDesdeArchivos() { }
 
         Estacion* buscarEstacionPorCodigo(std::string codigo) { return nullptr; }
 
-        void agregarEstacion(Estacion* estacion) { }
+        void agregarEstacion(Estacion* estacion) { 
+            if (estacion == nullptr) {
+                return;
+            }
+            std::string codigo = estacion->getCodigo();
 
-        bool eliminarEstacion(std::string codigo) { return false; }
+        
+            if (codigo.length() != 3 || !estaciones.insertar(codigo, estacion)) {
+                std::cout << "No se pudo agregar la estacion " << codigo
+                          << ": el codigo es invalido o ya existe.\n";
+                delete estacion;
+                return;
+            }
+
+            ciclovias.agregarVertice(codigo);
+            std::cout << "Estacion " << codigo << " agregada.\n";
+        }
+
+        bool eliminarEstacion(std::string codigo) {
+            Estacion* estacion = nullptr;
+            if (!estaciones.buscar(codigo, estacion)) {
+                return false;
+            }
+
+            ciclovias.eliminarVertice(codigo);   
+            estaciones.eliminar(codigo);         
+            delete estacion;                     
+            return true;
+         }
 
         void listarEstacionesOrdenadas(int criterio) { }
 
@@ -39,7 +66,11 @@ class SistemaBicis {
 
         void mostrarRecorridoMasCorto(std::string origen, std::string destino) { }
 
-        void mostrarEstadisticasDelHash() { }
+        void mostrarEstadisticasDelHash() {
+            std::cout << "Estaciones en la tabla: " << estaciones.obtenerCantidad() << "\n";
+            std::cout << "Colisiones: " << estaciones.obtenerColisiones() << "\n";
+            std::cout << "Factor de carga: " << estaciones.calcularFactorDeCarga() << "\n";
+        }
 
         int contarViajesDesdeEstacionEnRango(std::string codigo, int fechaDesde, int fechaHasta) { return 0; }
 
@@ -65,5 +96,15 @@ class SistemaBicis {
 
         void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) { }
 
-        ~SistemaBicis() { }
+        ~SistemaBicis() {
+             int cantidad = estaciones.obtenerCantidad();
+            if (cantidad > 0) {
+                Estacion** todas = new Estacion*[cantidad];
+                estaciones.obtenerTodos(todas);
+                for (int i = 0; i < cantidad; i++) {
+                    delete todas[i];
+                }
+                delete[] todas;
+            }
+        }
 };

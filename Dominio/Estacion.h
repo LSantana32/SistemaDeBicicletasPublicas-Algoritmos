@@ -24,7 +24,7 @@ class Estacion {
             this->bicisDisponibles = bicisDisponibles;
         }
 
-        std::string getCodigo() { return std::string(); }
+        std::string getCodigo() { return codigo; }
 
         double calcularPorcentajeOcupacion() { return 0.0; }
 
