@@ -27,7 +27,14 @@ class SistemaBicis {
 
         void cargarDatosDesdeArchivos() { }
 
-        Estacion* buscarEstacionPorCodigo(std::string codigo) { return nullptr; }
+        void mostrarInformacionDeEstacionPorCodigo(std::string codigo) { 
+            Estacion* resultado=nullptr;
+            if (estaciones.buscar(codigo, resultado)) {
+                resultado->mostrarInformacion();
+            } else {
+                std::cout << "Estacion con codigo " << codigo << " no encontrada." << std::endl;
+            }
+         }
 
         void agregarEstacion(Estacion* estacion) { }
 
