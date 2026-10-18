@@ -20,7 +20,7 @@ classDiagram
         -ABB~int, Bicicleta*~ bicicletas
         -HeapMin~Bicicleta*~ taller
         +cargarDatosDesdeArchivos() void
-        +buscarEstacionPorCodigo(string codigo) Estacion*
+        +mostrarInformacionDeEstacionPorCodigo(string codigo) void
         +agregarEstacion(Estacion* estacion) void
         +eliminarEstacion(string codigo) bool
         +listarEstacionesOrdenadas(int criterio) void
