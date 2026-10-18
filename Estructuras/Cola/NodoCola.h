@@ -7,14 +7,14 @@ class NodoCola {
         NodoCola<T>* siguiente;
 
     public:
-        NodoCola(T dato, NodoCola<T>* siguiente) {
+        NodoCola(T dato) {
             this->dato = dato;
-            this->siguiente = siguiente;
+            this->siguiente = nullptr;
         }
 
-        T getDato() { return T(); }
+        T getDato() { return dato; }
 
-        NodoCola<T>* getSiguiente() { return nullptr; }
+        NodoCola<T>* getSiguiente() { return siguiente; }
 
-        void setSiguiente(NodoCola<T>* nodo) { }
+        void setSiguiente(NodoCola<T>* nodo) { siguiente = nodo; }
 };

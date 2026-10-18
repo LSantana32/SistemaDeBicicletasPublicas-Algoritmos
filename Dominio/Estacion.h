@@ -13,9 +13,10 @@ class Estacion {
         int bicisDisponibles;
         Cola<int> colaEspera;
 
+    
+
     public:
-        Estacion(std::string codigo, std::string nombre, std::string barrio, int capacidadAnclajes, int bicisDisponibles, Cola<int> colaEspera)
-            : colaEspera(colaEspera) {
+        Estacion(std::string codigo, std::string nombre, std::string barrio, int capacidadAnclajes, int bicisDisponibles) {
             this->codigo = codigo;
             this->nombre = nombre;
             this->barrio = barrio;
