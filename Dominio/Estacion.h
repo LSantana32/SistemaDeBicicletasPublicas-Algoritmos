@@ -26,7 +26,7 @@ public:
         this->bicisDisponibles = bicisDisponibles;
     }
 
-    std::string getCodigo() { return std::string(); }
+    std::string getCodigo() { return codigo; }
 
     int getCapacidadAnclajes() { return capacidadAnclajes; }
 
