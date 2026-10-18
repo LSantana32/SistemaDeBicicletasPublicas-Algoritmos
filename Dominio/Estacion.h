@@ -16,8 +16,11 @@ private:
     Cola<int> colaEspera;
 
 public:
+// Cada estacion inicializa su propia cola de espera vacia.
+// No se recibe una Cola por parametro porque la clase Cola no permite copias.
+//Osea que borre el parametro porque se rompia todo, basicamente.
     Estacion(std::string codigo, std::string nombre, std::string barrio, int capacidadAnclajes, int bicisDisponibles, Cola<int> colaEspera)
-        : colaEspera(colaEspera)
+        : colaEspera()
     {
         this->codigo = codigo;
         this->nombre = nombre;
@@ -28,7 +31,19 @@ public:
 
     std::string getCodigo() { return codigo; }
 
-    int getCapacidadAnclajes() { return capacidadAnclajes; }
+    int getCapacidadAnclajes() { 
+        return capacidadAnclajes;
+    }
+    double calcularPorcentajeOcupacion() { 
+        if(capacidadAnclajes == 0){
+            return 0.0;
+        }
+
+        int ocupacion = capacidadAnclajes - bicisDisponibles;
+        double porcentaje = (ocupacion * 100) / capacidadAnclajes;
+        
+        return porcentaje; 
+        }
 
     int getBicisDisponibles() { return bicisDisponibles; }
 

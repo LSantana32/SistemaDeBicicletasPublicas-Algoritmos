@@ -26,7 +26,17 @@ class VerticeGrafo {
 
         void eliminarAristaHacia(VerticeGrafo<T>* destino) { }
 
-        AristaGrafo<T>* getPrimeraArista() { return nullptr; }
+        void setVisitado(bool visitado) { 
+            this->visitado = visitado; 
+        }
+
+        bool getVisitado() { 
+            return visitado; 
+        }
+
+        AristaGrafo<T>* getPrimeraArista() { 
+            return primeraArista; 
+        }
 
         ~VerticeGrafo() { }
 };
