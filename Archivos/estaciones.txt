@@ -1,0 +1,6 @@
+PLZ PlazaDeMayo Monserrat 30 12
+PAL ParqueTresDeFebrero Palermo 40 35
+CAB PrimeraJunta Caballito 25 4
+RET Retiro Retiro 20 8
+CON Congreso Monserrat 15 3
+BOE Boca Boca 18 9
