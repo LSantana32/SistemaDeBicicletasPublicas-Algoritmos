@@ -19,8 +19,10 @@ public:
 // Cada estacion inicializa su propia cola de espera vacia.
 // No se recibe una Cola por parametro porque la clase Cola no permite copias.
 //Osea que borre el parametro porque se rompia todo, basicamente.
-    Estacion(std::string codigo, std::string nombre, std::string barrio, int capacidadAnclajes, int bicisDisponibles, Cola<int> colaEspera)
-        : colaEspera()
+    Estacion(std::string codigo, std::string nombre,
+            std::string barrio, int capacidadAnclajes,
+            int bicisDisponibles)
+            : colaEspera()
     {
         this->codigo = codigo;
         this->nombre = nombre;
@@ -46,8 +48,6 @@ public:
         }
 
     int getBicisDisponibles() { return bicisDisponibles; }
-
-    double calcularPorcentajeOcupacion() { return 0.0; }
 
     bool retirarBicicleta(int dni) { return false; }
 

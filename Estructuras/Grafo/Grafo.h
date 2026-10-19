@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VerticeGrafo.h"
+#include "../Cola/Cola.h"
 
 template <class T>
 struct NodoBFS {
@@ -59,7 +60,7 @@ class Grafo {
 
         //Listar las estaciones con poca ocupación (menos del 20% de ocupación)
         Lista<T> estacionesConPocaOcupacion() { 
-            Lista<T> listaResultados();
+            Lista<T> listaResultados;
             VerticeGrafo<T>* verticeActual = primerVertice;
             // cada vertice tiene el dato de la estacion, su siguiente y anterior vertice.
             // por eso uso un while para recorrer toda la lista de vertices.
