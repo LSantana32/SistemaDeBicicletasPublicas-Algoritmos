@@ -8,7 +8,23 @@ class Lista {
         NodoLista<T>* primero;
         int largo;
 
+        void vaciar() {
+            NodoLista<T>* actual = primero;
+            while (actual != nullptr) {
+                NodoLista<T>* temp = actual;
+                actual = actual->getSiguiente();
+                delete temp;
+            }
+            primero = nullptr;
+            largo = 0;
+        }
+
     public:
+        Lista() {
+            this->primero = nullptr;
+            this->largo = 0;
+        }
+
         Lista(NodoLista<T>* primero, int largo) {
             this->primero = primero;
             this->largo = largo;
@@ -19,24 +35,35 @@ class Lista {
         }
 
         void insertarEnPosicion(T dato, int posicion) {
+            if (posicion < 0) {
+                return;
+            }
+
+            if (posicion >= largo || primero == nullptr) {
+                insertarAlFinal(dato);
+                return;
+            }
+
             NodoLista<T>* nuevoNodo = new NodoLista<T>(dato, nullptr);
+
             if (posicion == 0) {
                 nuevoNodo->setSiguiente(primero);
                 primero = nuevoNodo;
             } else {
                 NodoLista<T>* actual = primero;
-                for (int i = 0; i < posicion - 1 && actual != nullptr; i++) {
+                for (int i = 0; i < posicion - 1; i++) {
                     actual = actual->getSiguiente();
                 }
-                if (actual != nullptr) {
-                    nuevoNodo->setSiguiente(actual->getSiguiente());
-                    actual->setSiguiente(nuevoNodo);
-                }
+                nuevoNodo->setSiguiente(actual->getSiguiente());
+                actual->setSiguiente(nuevoNodo);
             }
+
+            largo++;
         }
 
-        void insertarAlFinal(T dato) { 
+        void insertarAlFinal(T dato) {
             NodoLista<T>* nuevoNodo = new NodoLista<T>(dato, nullptr);
+
             if (primero == nullptr) {
                 primero = nuevoNodo;
             } else {
@@ -46,47 +73,55 @@ class Lista {
                 }
                 actual->setSiguiente(nuevoNodo);
             }
+
+            largo++;
         }
 
-        void eliminarEnPosicion(int posicion) { 
-            if (posicion == 0 && primero != nullptr) {
+        void eliminarEnPosicion(int posicion) {
+            if (posicion < 0 || posicion >= largo || primero == nullptr) {
+                return;
+            }
+
+            if (posicion == 0) {
                 NodoLista<T>* temp = primero;
                 primero = primero->getSiguiente();
                 delete temp;
             } else {
                 NodoLista<T>* actual = primero;
-                for (int i = 0; i < posicion - 1 && actual != nullptr; i++) {
+                for (int i = 0; i < posicion - 1; i++) {
                     actual = actual->getSiguiente();
                 }
-                if (actual != nullptr && actual->getSiguiente() != nullptr) {
-                    NodoLista<T>* temp = actual->getSiguiente();
-                    actual->setSiguiente(temp->getSiguiente());
-                    delete temp;
-                }
+
+                NodoLista<T>* temp = actual->getSiguiente();
+                actual->setSiguiente(temp->getSiguiente());
+                delete temp;
             }
+
+            largo--;
         }
 
-        T obtenerEnPosicion(int posicion) { 
+        T obtenerEnPosicion(int posicion) {
+            if (posicion < 0 || posicion >= largo) {
+                return T();
+            }
+
             NodoLista<T>* actual = primero;
             for (int i = 0; i < posicion && actual != nullptr; i++) {
                 actual = actual->getSiguiente();
             }
+
             if (actual != nullptr) {
                 return actual->getDato();
             }
-            return nullptr; 
+
+            return T();
         }
 
-        bool estaVacia() { return primero == nullptr; }
+        bool estaVacia() const { return primero == nullptr; }
 
-        int obtenerLargo() { return largo; }
+        int obtenerLargo() const { return largo; }
 
         ~Lista() {
-            NodoLista<T>* actual = primero;
-            while (actual != nullptr) {
-                NodoLista<T>* temp = actual;
-                actual = actual->getSiguiente();
-                delete temp;
-            }
+            vaciar();
         }
 };
