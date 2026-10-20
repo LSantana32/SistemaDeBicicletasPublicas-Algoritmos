@@ -8,17 +8,6 @@ class Lista {
         NodoLista<T>* primero;
         int largo;
 
-        void vaciar() {
-            NodoLista<T>* actual = primero;
-            while (actual != nullptr) {
-                NodoLista<T>* temp = actual;
-                actual = actual->getSiguiente();
-                delete temp;
-            }
-            primero = nullptr;
-            largo = 0;
-        }
-
     public:
         Lista() {
             this->primero = nullptr;
@@ -28,6 +17,17 @@ class Lista {
         Lista(NodoLista<T>* primero, int largo) {
             this->primero = primero;
             this->largo = largo;
+        }
+
+        void vaciar() {
+            NodoLista<T>* actual = primero;
+            while (actual != nullptr) {
+                NodoLista<T>* temp = actual;
+                actual = actual->getSiguiente();
+                delete temp;
+            }
+            primero = nullptr;
+            largo = 0;
         }
 
         NodoLista<T>* obtenerPrimero() {

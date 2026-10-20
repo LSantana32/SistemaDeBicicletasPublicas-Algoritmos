@@ -2,6 +2,7 @@
 
 #include "VerticeGrafo.h"
 #include "../Cola/Cola.h"
+#include "../Lista/Lista.h"
 
 template <class T>
 struct NodoBFS {
@@ -21,7 +22,16 @@ class Grafo {
         VerticeGrafo<T>* primerVertice;
         int cantidadVertices;
 
-        VerticeGrafo<T>* buscarVertice(T dato) { return nullptr; }
+        VerticeGrafo<T>* buscarVertice(T dato) {
+            VerticeGrafo<T>* actual = primerVertice;
+            while (actual != nullptr) {
+                if (actual->getDato() == dato) {
+                    return actual;
+                }
+                actual = actual->getSiguiente();
+            }
+            return nullptr;
+        }
 
         void reiniciarMarcas() { }
 
@@ -42,13 +52,64 @@ class Grafo {
             this->cantidadVertices = cantidadVertices;
         }
 
-        void agregarVertice(T dato) { }
+        void agregarVertice(T dato) {
+            if (existeVertice(dato)) { // Si el vértice ya existe, no se agrega 
+                return;
+            }
 
-        bool eliminarVertice(T dato) { return false; }
+            //El nuevo vertice pasa a ser el primero, y su siguiente es el anterior primer vertice
+            VerticeGrafo<T>* nuevoVertice =
+                new VerticeGrafo<T>(dato, nullptr, primerVertice, false, nullptr); 
 
-        void agregarArista(T origen, T destino) { }
+            primerVertice = nuevoVertice;
+            cantidadVertices++;
+        }
 
-        bool existeVertice(T dato) { return false; }
+        bool eliminarVertice(T dato) {
+            VerticeGrafo<T>* actual = primerVertice;
+            VerticeGrafo<T>* anterior = nullptr;
+
+            //Recorro los vertices hasta encontrar el que busco
+            while (actual != nullptr && !(actual->getDato() == dato)) {
+                anterior = actual;
+                actual = actual->getSiguiente();
+            }
+
+            if (actual == nullptr) { // Si no existe no se elimina nada
+                return false;
+            }
+
+            if (anterior == nullptr) { // Si el vertice a eliminar es el primero, actualizo el primer vertice.
+                primerVertice = actual->getSiguiente();
+            } else {
+                anterior->setSiguiente(actual->getSiguiente()); // Si no lo es, actualizo el siguiente del anterior al eliminar.
+            }
+
+            // Elimino todas las aristas que apuntan al vertice eliminado.
+            VerticeGrafo<T>* otro = primerVertice; 
+            while (otro != nullptr) {
+                otro->eliminarAristaHacia(actual);
+                otro = otro->getSiguiente();
+            }
+
+            delete actual;
+            cantidadVertices--;
+            return true;
+        }
+
+        void agregarArista(T origen, T destino) {
+            VerticeGrafo<T>* verticeOrigen = buscarVertice(origen);
+            VerticeGrafo<T>* verticeDestino = buscarVertice(destino);
+
+            if (verticeOrigen == nullptr || verticeDestino == nullptr || verticeOrigen == verticeDestino) { 
+                return;
+            }
+
+            verticeOrigen->agregarAristaHacia(verticeDestino);
+            verticeDestino->agregarAristaHacia(verticeOrigen);
+        }
+
+        bool existeVertice(T dato) { return buscarVertice(dato) != nullptr; }
 
         void reiniciarVisitas() { 
             VerticeGrafo<T>* verticeActual = primerVertice;
@@ -58,25 +119,9 @@ class Grafo {
             }
         }
 
-        //Listar las estaciones con poca ocupación (menos del 20% de ocupación)
-        Lista<T> estacionesConPocaOcupacion() { 
-            Lista<T> listaResultados;
-            VerticeGrafo<T>* verticeActual = primerVertice;
-            // cada vertice tiene el dato de la estacion, su siguiente y anterior vertice.
-            // por eso uso un while para recorrer toda la lista de vertices.
-            // solo recorro los vertices, no las aristas, solo tengo que revisar las estaciones, no sus conexiones.
-            while(verticeActual != nullptr) {
-                double porcentajeOcupacion = verticeActual->getDato().calcularPorcentajeOcupacion();
-                if (porcentajeOcupacion < 20.0) {
-                    listaResultados.insertarAlFinal(verticeActual->getDato());
-                }
-                verticeActual = verticeActual->getSiguiente();
-            }
-            return listaResultados; 
-        }
-
         //Camino más corto entre dos estaciones usando BFS
         bool caminoMasCorto(T origen, T destino, Lista<T> &camino, int& largo) { 
+            camino.vaciar();
             reiniciarVisitas();
             largo = -1;
 
@@ -142,5 +187,13 @@ class Grafo {
             return true; 
         }
 
-        ~Grafo() { }
+        ~Grafo() {
+            VerticeGrafo<T>* actual = primerVertice;
+
+            while (actual != nullptr) {
+                VerticeGrafo<T>* siguienteVertice = actual->getSiguiente();
+                delete actual;
+                actual = siguienteVertice;
+            }
+        }
 };

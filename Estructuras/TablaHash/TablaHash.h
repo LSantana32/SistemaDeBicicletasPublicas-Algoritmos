@@ -3,6 +3,7 @@
 #include <string>
 
 #include "NodoHash.h"
+#include "../Lista/Lista.h"
 
 template <class V>
 class TablaHash
@@ -127,6 +128,19 @@ public:
             {
                 destino[k] = actual->getDato();
                 k++;
+                actual = actual->getSiguiente();
+            }
+        }
+    }
+
+    void obtenerTodos(Lista<V> &destino)
+    {
+        for (int i = 0; i < capacidad; i++)
+        {
+            NodoHash<V> *actual = tabla[i];
+            while (actual != nullptr)
+            {
+                destino.insertarAlFinal(actual->getDato());
                 actual = actual->getSiguiente();
             }
         }

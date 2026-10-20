@@ -2,6 +2,8 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "../Estructuras/TablaHash/TablaHash.h"
 #include "../Estructuras/Lista/Lista.h"
@@ -27,7 +29,37 @@ class SistemaBicis {
             taller(nullptr, 0, 0) {
         }
 
-        void cargarDatosDesdeArchivos() { }
+        void cargarDatosDesdeArchivos() {
+            std::ifstream archivoEstaciones("Archivos/estaciones.txt");
+            std::string linea;
+
+            while (std::getline(archivoEstaciones, linea)) {
+                std::istringstream flujo(linea);
+                std::string codigo;
+                std::string nombre;
+                std::string barrio;
+                int capacidadAnclajes;
+                int bicisDisponibles;
+
+                if (flujo >> codigo >> nombre >> barrio >> capacidadAnclajes
+                          >> bicisDisponibles) {
+                    agregarEstacion(new Estacion(codigo, nombre, barrio,
+                                                 capacidadAnclajes, bicisDisponibles));
+                }
+            }
+
+            std::ifstream archivoCiclovias("Archivos/ciclovias.txt");
+
+            while (std::getline(archivoCiclovias, linea)) {
+                std::istringstream flujo(linea);
+                std::string origen;
+                std::string destino;
+
+                if (flujo >> origen >> destino) {
+                    ciclovias.agregarArista(origen, destino);
+                }
+            }
+        }
 
         void mostrarInformacionDeEstacionPorCodigo(std::string codigo) { 
             Estacion* resultado=nullptr;
@@ -103,9 +135,67 @@ class SistemaBicis {
             delete[] arreglo;
         }
 
-        void listarEstacionesConBajaOcupacion() { }
+        void listarEstacionesConBajaOcupacion() {
+            if (estaciones.obtenerCantidad() == 0) {
+                std::cout << "No hay estaciones para listar." << std::endl;
+                return;
+            }
 
-        void mostrarRecorridoMasCorto(std::string origen, std::string destino) { }
+            Lista<Estacion*> listaEstaciones;
+            estaciones.obtenerTodos(listaEstaciones);
+
+            Lista<Estacion*> estacionesBajaOcupacion;
+            NodoLista<Estacion*>* actual = listaEstaciones.obtenerPrimero();
+
+            while (actual != nullptr) {
+                Estacion* estacion = actual->getDato();
+
+                if (estacion->calcularPorcentajeOcupacion() < 20.0) {
+                    estacionesBajaOcupacion.insertarAlFinal(estacion);
+                }
+
+                actual = actual->getSiguiente();
+            }
+
+            NodoLista<Estacion*>* baja = estacionesBajaOcupacion.obtenerPrimero();
+
+            if (baja == nullptr) {
+                std::cout << "No hay estaciones con baja ocupacion." << std::endl;
+                return;
+            }
+
+            while (baja != nullptr) {
+                baja->getDato()->mostrarInformacion();
+                baja = baja->getSiguiente();
+            }
+        }
+
+        void mostrarRecorridoMasCorto(std::string origen, std::string destino) {
+            Lista<std::string> camino;
+            int largo = 0;
+
+            if (!ciclovias.caminoMasCorto(origen, destino, camino, largo)) {
+                std::cout << "No existe un recorrido entre " << origen
+                          << " y " << destino << "." << std::endl;
+                return;
+            }
+
+            std::cout << "Recorrido mas corto (" << largo << " tramos): ";
+
+            NodoLista<std::string>* actual = camino.obtenerPrimero();
+
+            while (actual != nullptr) {
+                std::cout << actual->getDato();
+
+                actual = actual->getSiguiente();
+
+                if (actual != nullptr) {
+                    std::cout << " -> ";
+                }
+            }
+
+            std::cout << std::endl;
+        }
 
         void mostrarEstadisticasDelHash() {
             std::cout << "Estaciones en la tabla: " << estaciones.obtenerCantidad() << "\n";

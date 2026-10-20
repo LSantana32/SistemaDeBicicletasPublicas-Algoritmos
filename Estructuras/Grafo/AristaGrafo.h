@@ -15,9 +15,9 @@ class AristaGrafo {
             this->siguiente = siguiente;
         }
 
-        VerticeGrafo<T>* getDestino() { return nullptr; }
+        VerticeGrafo<T>* getDestino() { return destino; }
 
-        AristaGrafo<T>* getSiguiente() { return nullptr; }
+        AristaGrafo<T>* getSiguiente() { return siguiente; }
 
-        void setSiguiente(AristaGrafo<T>* arista) { }
+        void setSiguiente(AristaGrafo<T>* arista) { siguiente = arista; }
 };
