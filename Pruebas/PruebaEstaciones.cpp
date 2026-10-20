@@ -4,9 +4,9 @@
 #include <string>
 #include "../Sistema/SistemaBicis.h"
 
-int fallas = 0;
+static int fallas = 0;
 
-void verificar(bool condicion, std::string descripcion) {
+static void verificar(bool condicion, std::string descripcion) {
     if (condicion) {
         std::cout << "[OK]    " << descripcion << "\n";
     } else {

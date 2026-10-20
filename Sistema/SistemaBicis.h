@@ -42,9 +42,9 @@ class SistemaBicis {
                 int bicisDisponibles;
 
                 if (flujo >> codigo >> nombre >> barrio >> capacidadAnclajes
-                          >> bicisDisponibles) {
+                        >> bicisDisponibles) {
                     agregarEstacion(new Estacion(codigo, nombre, barrio,
-                                                 capacidadAnclajes, bicisDisponibles));
+                                                    capacidadAnclajes, bicisDisponibles));
                 }
             }
 
@@ -68,7 +68,14 @@ class SistemaBicis {
             } else {
                 std::cout << "Estacion con codigo " << codigo << " no encontrada." << std::endl;
             }
-         }
+        }
+
+        void agregarViaje(Viaje* viaje) {
+            if (viaje == nullptr) {
+                return;
+            }
+            viajes.insertarAlFinal(viaje);
+        }
 
         void agregarEstacion(Estacion* estacion) { 
             if (estacion == nullptr) {
@@ -79,7 +86,7 @@ class SistemaBicis {
         
             if (codigo.length() != 3 || !estaciones.insertar(codigo, estacion)) {
                 std::cout << "No se pudo agregar la estacion " << codigo
-                          << ": el codigo es invalido o ya existe.\n";
+                            << ": el codigo es invalido o ya existe.\n";
                 delete estacion;
                 return;
             }
@@ -98,7 +105,7 @@ class SistemaBicis {
             estaciones.eliminar(codigo);         
             delete estacion;                     
             return true;
-         }
+        }
 
         void listarEstacionesOrdenadas(int criterio) {
             int cantidad = estaciones.obtenerCantidad();
@@ -116,9 +123,9 @@ class SistemaBicis {
             for (int i = 0; i < cantidad - 1; i++) {
                 for (int j = 0; j < cantidad - 1 - i; j++) {
                     int izquierda = porCapacidad ? arreglo[j]->getCapacidadAnclajes()
-                                                 : arreglo[j]->getBicisDisponibles();
+                                                : arreglo[j]->getBicisDisponibles();
                     int derecha = porCapacidad ? arreglo[j + 1]->getCapacidadAnclajes()
-                                               : arreglo[j + 1]->getBicisDisponibles();
+                                                : arreglo[j + 1]->getBicisDisponibles();
 
                     if (derecha < izquierda) {
                         Estacion* aux = arreglo[j];
@@ -130,6 +137,10 @@ class SistemaBicis {
 
             for (int i = 0; i < cantidad; i++) {
                 arreglo[i]->mostrarInformacion();
+
+                if (i < cantidad - 1) {
+                    std::cout << "--------------------\n";
+                }
             }
 
             delete[] arreglo;
@@ -176,7 +187,7 @@ class SistemaBicis {
 
             if (!ciclovias.caminoMasCorto(origen, destino, camino, largo)) {
                 std::cout << "No existe un recorrido entre " << origen
-                          << " y " << destino << "." << std::endl;
+                            << " y " << destino << "." << std::endl;
                 return;
             }
 
@@ -254,7 +265,7 @@ class SistemaBicis {
             }
 
             std::cout << "Total de minutos pedaleados: "
-                  << totalMinutos << '\n';
+                    << totalMinutos << '\n';
         }
 
         Bicicleta* buscarBicicletaPorId(int id) { return nullptr; }
@@ -278,7 +289,13 @@ class SistemaBicis {
         void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) { }
 
         ~SistemaBicis() {
-             int cantidad = estaciones.obtenerCantidad();
+            NodoLista<Viaje*>* actualViaje = viajes.obtenerPrimero();
+            while (actualViaje != nullptr) {
+                delete actualViaje->getDato();
+                actualViaje = actualViaje->getSiguiente();
+            }
+
+            int cantidad = estaciones.obtenerCantidad();
             if (cantidad > 0) {
                 Estacion** todas = new Estacion*[cantidad];
                 estaciones.obtenerTodos(todas);

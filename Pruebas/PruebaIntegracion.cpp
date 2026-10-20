@@ -34,13 +34,33 @@ int main() {
     std::cout << "\n=== PRUEBA 6: ESTADISTICAS DE LA TABLA HASH ===\n";
     sistema.mostrarEstadisticasDelHash();
 
-    std::cout << "\n=== PRUEBA 7: PORCENTAJE DE OCUPACION ===\n";
+    std::cout << "\n=== PRUEBA 7: LISTAR ESTACIONES CON BAJA OCUPACION ===\n";
+    sistema.listarEstacionesConBajaOcupacion();
+
+    std::cout << "\n=== PRUEBA 8: ELIMINAR ESTACION EXISTENTE ===\n";
+    if (sistema.eliminarEstacion("PAL")) {
+        std::cout << "Estacion PAL eliminada correctamente.\n";
+    } else {
+        std::cout << "No se pudo eliminar la estacion PAL.\n";
+    }
+
+    std::cout << "\n=== PRUEBA 9: ELIMINAR ESTACION INEXISTENTE ===\n";
+    if (sistema.eliminarEstacion("XXX")) {
+        std::cout << "Estacion XXX eliminada correctamente.\n";
+    } else {
+        std::cout << "No se pudo eliminar la estacion XXX.\n";
+    }
+    
+    std::cout << "\n=== PRUEBA 10: ESTADISTICAS DE LA TABLA HASH DESPUES DE ELIMINAR ===\n";
+    sistema.mostrarEstadisticasDelHash();
+
+    std::cout << "\n=== PRUEBA 11: PORCENTAJE DE OCUPACION DE UNA ESTACION ===\n";
 
     Estacion prueba("TST", "Estacion de prueba", "Centro", 20, 5);
 
     std::cout << "Porcentaje esperado: 75%\n";
     std::cout << "Porcentaje obtenido: "
-          << prueba.calcularPorcentajeOcupacion() << "%\n";
+            << prueba.calcularPorcentajeOcupacion() << "%\n";
 
     return 0;
 }

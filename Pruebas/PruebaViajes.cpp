@@ -1,9 +1,9 @@
 
 #include <iostream>
 
-#include "Dominio/Viaje.h"
-#include "Estructuras/Lista/NodoLista.h"
-#include "Estructuras/Lista/Lista.h"
+#include "../Dominio/Viaje.h"
+#include "../Estructuras/Lista/NodoLista.h"
+#include "../Estructuras/Lista/Lista.h"
 
 int main() {
     Viaje* viaje1 = new Viaje(
@@ -44,10 +44,6 @@ int main() {
     delete viaje1;
     delete viaje2;
     delete viaje3;
-
-    delete nodo1;
-    delete nodo2;
-    delete nodo3;
 
     return 0;
 }
