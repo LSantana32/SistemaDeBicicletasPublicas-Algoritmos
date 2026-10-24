@@ -22,11 +22,21 @@ class Bicicleta {
 
         int getId() { return id; }
 
+        std::string getCodigoEstacion() { return codigoEstacion; }
+
+        std::string getEstado() { return estado; }
+
+        void setCodigoEstacion(std::string codigo) {
+            codigoEstacion = codigo;
+        }
+
         int getKilometros() { return kilometros; }
 
         bool estaAveriada() { return estado == "Averiada"; }
 
         bool esElectrica() { return tipo == "Electrica"; }
+
+        void iniciarViaje() { codigoEstacion = ""; }
 
         void mostrarInformacion() { 
             std::cout << "ID: " << id << std::endl;

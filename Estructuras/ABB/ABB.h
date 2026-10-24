@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "NodoABB.h"
 
 template <class K, class V>
@@ -79,9 +81,28 @@ class ABB {
         }
 
 
-        
+        V obtenerBicicletaDisponibleEnEstacionRecursivo(
+            NodoABB<K, V>* nodo, std::string clave) {
+            if (nodo == nullptr) {
+                return nullptr;
+            }
 
-     public:
+            V bicicleta = nodo->getDato();
+            if (bicicleta != nullptr
+                && bicicleta->getCodigoEstacion() == clave
+                && !bicicleta->estaAveriada()) {
+                return bicicleta;
+            }
+
+            V izquierda = obtenerBicicletaDisponibleEnEstacionRecursivo(nodo->getIzquierdo(), clave);
+            if (izquierda != nullptr) {
+                return izquierda;
+            }
+
+            return obtenerBicicletaDisponibleEnEstacionRecursivo(nodo->getDerecho(), clave);
+        }
+
+    public:
         ABB(NodoABB<K,V>* raiz, int cantidad) {
             this->raiz = raiz;
             this->cantidad = cantidad;
@@ -122,6 +143,14 @@ class ABB {
         int calcularAltura() { return alturaRecursiva(raiz); }
 
         int obtenerCantidad() { return cantidad; }
+
+        V obtenerBicicletaDisponibleEnEstacion(std::string clave) {
+            V resultado = obtenerBicicletaDisponibleEnEstacionRecursivo(raiz, clave);
+            if (resultado != nullptr) {
+                return resultado;
+            }
+            return nullptr;
+        }
 
         bool estaVacio() { return raiz == nullptr; }
 

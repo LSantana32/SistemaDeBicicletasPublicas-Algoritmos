@@ -185,13 +185,16 @@ class Menu {
                 case 16: {
                     std::string codigo = leerLinea("Codigo de la estacion: ");
                     int dni = leerEntero("DNI del usuario: ");
-                    sistema->retirarBicicleta(codigo, dni);
+                    int fechaActual = leerEntero("Fecha actual (AAAAMMDD): ");
+                    sistema->retirarBicicleta(codigo, dni, fechaActual);
                     break;
                 }
 
                 case 17: {
                     std::string codigo = leerLinea("Codigo de la estacion: ");
-                    sistema->devolverBicicleta(codigo);
+                    int dni = leerEntero("DNI del usuario: ");
+                    int duracion = leerEntero("Duracion del viaje (minutos): ");
+                    sistema->devolverBicicleta(codigo, dni, duracion);
                     break;
                 }
 
