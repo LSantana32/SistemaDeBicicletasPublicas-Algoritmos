@@ -21,11 +21,11 @@ class ABB {
             if (clave < nodo->getClave()) {
                 nodo->setIzquierdo(
                     insertarRecursivo(nodo->getIzquierdo(),
-                                      clave, dato, insertado));
+                                        clave, dato, insertado));
             } else if (clave > nodo->getClave()) {
                 nodo->setDerecho(
                     insertarRecursivo(nodo->getDerecho(),
-                                      clave, dato, insertado));
+                                        clave, dato, insertado));
             }
 
             return nodo;
@@ -65,6 +65,7 @@ class ABB {
 
             liberarPostorder(nodo->getIzquierdo());
             liberarPostorder(nodo->getDerecho());
+            delete nodo->getDato();
             delete nodo;
         }
 
@@ -117,7 +118,7 @@ class ABB {
             }
 
             return insertado;
-         }
+        }
 
         bool buscar(K clave, V& resultado) {
             NodoABB<K, V>* nodo = buscarRecursivo(raiz, clave);
