@@ -59,6 +59,32 @@ class SistemaBicis {
                     ciclovias.agregarArista(origen, destino);
                 }
             }
+
+            
+            std::ifstream archivoBicicletas("Archivos/bicicletas.txt");
+
+            while (std::getline(archivoBicicletas, linea)) {
+                std::istringstream flujo(linea);
+                
+                int id;
+                std::string codigoEstacion;
+                std::string tipo;
+                std::string estado;
+                int kilometros;
+
+                if (flujo >> id >> codigoEstacion >> tipo >> estado >> kilometros) {
+                    Bicicleta* bicicleta = new Bicicleta(
+                        id, codigoEstacion, tipo, estado, kilometros
+                    );
+
+                if (!bicicletas.insertar(id, bicicleta)) {
+                    delete bicicleta;
+                    std::cout << "No se pudo insertar la bicicleta "
+                      << id << ": el ID ya existe.\n";
+                    }
+                }
+            }
+
         }
 
         void mostrarInformacionDeEstacionPorCodigo(std::string codigo) { 
@@ -268,9 +294,38 @@ class SistemaBicis {
                     << totalMinutos << '\n';
         }
 
-        Bicicleta* buscarBicicletaPorId(int id) { return nullptr; }
+        Bicicleta* buscarBicicletaPorId(int id) { 
+            Bicicleta* resultado = nullptr;
 
-        void listarBicicletasOrdenadasPorId() { }
+            if(bicicletas.buscar(id, resultado)) {
+                return resultado;
+            }
+            return nullptr;
+        }
+
+        void listarBicicletasOrdenadasPorId() {
+            int cantidad = bicicletas.obtenerCantidad();
+
+            if(cantidad == 0){
+                std::cout << "No hay bicicletas para listar.\n";
+                return;
+            }
+
+            Bicicleta** arreglo = new Bicicleta*[cantidad];
+
+            bicicletas.obtenerEnInorder(arreglo);
+
+            for (int i = 0; i < cantidad; i++) {
+                if (arreglo[i] != nullptr) {
+                    arreglo[i]->mostrarInformacion();
+
+                    if (i < cantidad - 1) {
+                        std::cout << "--------------------\n";
+                    }
+                }
+            }
+            delete[] arreglo;
+        }
 
         int contarBicicletasAveriadas() { return 0; }
 
