@@ -29,6 +29,7 @@ classDiagram
         +mostrarEstadisticasDelHash() void
         +contarViajesDesdeEstacionEnRango(string codigo, int fechaDesde, int fechaHasta) int
         +mostrarViajesYMinutosDeUsuario(int dni) void
+        +agregarBicicleta(int id, string codigoEstacion, string tipo, string estado, int kilometros) void
         +buscarBicicletaPorId(int id) Bicicleta*
         +listarBicicletasOrdenadasPorId() void
         +contarBicicletasAveriadas() int

@@ -73,15 +73,7 @@ class SistemaBicis {
                 int kilometros;
 
                 if (flujo >> id >> codigoEstacion >> tipo >> estado >> kilometros) {
-                    Bicicleta* bicicleta = new Bicicleta(
-                        id, codigoEstacion, tipo, estado, kilometros
-                    );
-
-                if (!bicicletas.insertar(id, bicicleta)) {
-                    delete bicicleta;
-                    std::cout << "No se pudo insertar la bicicleta "
-                      << id << ": el ID ya existe.\n";
-                    }
+                    agregarBicicleta(id, codigoEstacion, tipo, estado, kilometros);
                 }
             }
 
@@ -119,6 +111,28 @@ class SistemaBicis {
 
             ciclovias.agregarVertice(codigo);
             std::cout << "Estacion " << codigo << " agregada.\n";
+        }
+
+        void agregarBicicleta(int id, std::string codigoEstacion, std::string tipo, std::string estado, int kilometros) {
+            Estacion* estacion = nullptr;
+            if (!estaciones.buscar(codigoEstacion, estacion)) {
+                std::cout << "No se pudo agregar la bicicleta " << id
+                        << ": la estacion " << codigoEstacion
+                        << " no existe.\n";
+                return;
+            }
+
+            Bicicleta* bicicleta = new Bicicleta(
+                id, codigoEstacion, tipo, estado, kilometros);
+
+            if (!bicicletas.insertar(id, bicicleta)) {
+                std::cout << "No se pudo agregar la bicicleta " << id
+                        << ": el ID ya existe.\n";
+                delete bicicleta;
+                return;
+            }
+
+            std::cout << "Bicicleta " << id << " agregada.\n";
         }
 
         bool eliminarEstacion(std::string codigo) {
@@ -331,7 +345,10 @@ class SistemaBicis {
 
         void listarBicicletasConMasKm(int kmMinimo) { }
 
-        void mostrarAlturaDelArbol() { }
+        void mostrarAlturaDelArbol() {
+            int altura = bicicletas.calcularAltura();
+            std::cout << "Altura del arbol de bicicletas: " << altura << std::endl;
+        }
 
         void retirarBicicleta(std::string codigoEstacion, int dni, int fechaActual) {
             Estacion* estacion = nullptr;

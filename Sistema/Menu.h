@@ -68,17 +68,18 @@ class Menu {
             std::cout << " 9. Contar viajes desde una estacion en un rango de fechas\n";
             std::cout << "10. Viajes y minutos pedaleados de un usuario\n";
             std::cout << "--- Bicicletas ---\n";
-            std::cout << "11. Buscar bicicleta por ID\n";
-            std::cout << "12. Listar bicicletas ordenadas por ID\n";
-            std::cout << "13. Contar bicicletas averiadas\n";
-            std::cout << "14. Listar bicicletas con mas de X kilometros\n";
-            std::cout << "15. Mostrar altura del arbol de bicicletas\n";
+            std::cout << "11. Agregar bicicleta\n";
+            std::cout << "12. Buscar bicicleta por ID\n";
+            std::cout << "13. Listar bicicletas ordenadas por ID\n";
+            std::cout << "14. Contar bicicletas averiadas\n";
+            std::cout << "15. Listar bicicletas con mas de X kilometros\n";
+            std::cout << "16. Mostrar altura del arbol de bicicletas\n";
             std::cout << "--- Operaciones ---\n";
-            std::cout << "16. Retirar bicicleta de una estacion\n";
-            std::cout << "17. Devolver bicicleta en una estacion\n";
-            std::cout << "18. Enviar bicicleta al taller\n";
-            std::cout << "19. Reparar la siguiente bicicleta del taller\n";
-            std::cout << "20. Planificar redistribucion con el camion\n";
+            std::cout << "17. Retirar bicicleta de una estacion\n";
+            std::cout << "18. Devolver bicicleta en una estacion\n";
+            std::cout << "19. Enviar bicicleta al taller\n";
+            std::cout << "20. Reparar la siguiente bicicleta del taller\n";
+            std::cout << "21. Planificar redistribucion con el camion\n";
             std::cout << " 0. Salir\n";
         }
 
@@ -153,6 +154,17 @@ class Menu {
 
                 case 11: {
                     int id = leerEntero("ID de la bicicleta: ");
+                    std::string codigoEstacion = leerLinea("Codigo de la estacion: ");
+                    std::string tipo = leerLinea("Tipo: ");
+                    std::string estado = leerLinea("Estado: ");
+                    int kilometros = leerEntero("Kilometros: ");
+                    sistema->agregarBicicleta(
+                        id, codigoEstacion, tipo, estado, kilometros);
+                    break;
+                }
+
+                case 12: {
+                    int id = leerEntero("ID de la bicicleta: ");
                     Bicicleta* bicicleta = sistema->buscarBicicletaPorId(id);
                     if (bicicleta != nullptr) {
                         bicicleta->mostrarInformacion();
@@ -163,26 +175,26 @@ class Menu {
                     break;
                 }
 
-                case 12:
+                case 13:
                     sistema->listarBicicletasOrdenadasPorId();
                     break;
 
-                case 13:
+                case 14:
                     std::cout << "Bicicletas averiadas: "
                             << sistema->contarBicicletasAveriadas() << '\n';
                     break;
 
-                case 14: {
+                case 15: {
                     int kmMinimo = leerEntero("Kilometros minimos: ");
                     sistema->listarBicicletasConMasKm(kmMinimo);
                     break;
                 }
 
-                case 15:
+                case 16:
                     sistema->mostrarAlturaDelArbol();
                     break;
 
-                case 16: {
+                case 17: {
                     std::string codigo = leerLinea("Codigo de la estacion: ");
                     int dni = leerEntero("DNI del usuario: ");
                     int fechaActual = leerEntero("Fecha actual (AAAAMMDD): ");
@@ -190,7 +202,7 @@ class Menu {
                     break;
                 }
 
-                case 17: {
+                case 18: {
                     std::string codigo = leerLinea("Codigo de la estacion: ");
                     int dni = leerEntero("DNI del usuario: ");
                     int duracion = leerEntero("Duracion del viaje (minutos): ");
@@ -198,18 +210,18 @@ class Menu {
                     break;
                 }
 
-                case 18: {
+                case 19: {
                     int id = leerEntero("ID de la bicicleta: ");
                     int prioridad = leerEntero("Prioridad (1 alta, 2 media, 3 baja): ");
                     sistema->enviarBicicletaAlTaller(id, prioridad);
                     break;
                 }
 
-                case 19:
+                case 20:
                     sistema->repararSiguienteBicicleta();
                     break;
 
-                case 20: {
+                case 21: {
                     int capacidad = leerEntero("Capacidad del camion: ");
                     int cantidad = leerEntero("Cantidad de estaciones: ");
 
