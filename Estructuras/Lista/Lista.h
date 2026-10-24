@@ -9,20 +9,119 @@ class Lista {
         int largo;
 
     public:
+        Lista() {
+            this->primero = nullptr;
+            this->largo = 0;
+        }
+
         Lista(NodoLista<T>* primero, int largo) {
             this->primero = primero;
             this->largo = largo;
         }
 
-        void insertarEnPosicion(T dato, int posicion) { }
+        void vaciar() {
+            NodoLista<T>* actual = primero;
+            while (actual != nullptr) {
+                NodoLista<T>* temp = actual;
+                actual = actual->getSiguiente();
+                delete temp;
+            }
+            primero = nullptr;
+            largo = 0;
+        }
 
-        void eliminarEnPosicion(int posicion) { }
+        NodoLista<T>* obtenerPrimero() {
+            return primero;
+        }
 
-        T obtenerEnPosicion(int posicion) { return T(); }
+        void insertarEnPosicion(T dato, int posicion) {
+            if (posicion < 0) {
+                return;
+            }
 
-        bool estaVacia() { return false; }
+            if (posicion >= largo || primero == nullptr) {
+                insertarAlFinal(dato);
+                return;
+            }
 
-        int obtenerLargo() { return 0; }
+            NodoLista<T>* nuevoNodo = new NodoLista<T>(dato, nullptr);
 
-        ~Lista() { }
+            if (posicion == 0) {
+                nuevoNodo->setSiguiente(primero);
+                primero = nuevoNodo;
+            } else {
+                NodoLista<T>* actual = primero;
+                for (int i = 0; i < posicion - 1; i++) {
+                    actual = actual->getSiguiente();
+                }
+                nuevoNodo->setSiguiente(actual->getSiguiente());
+                actual->setSiguiente(nuevoNodo);
+            }
+
+            largo++;
+        }
+
+        void insertarAlFinal(T dato) {
+            NodoLista<T>* nuevoNodo = new NodoLista<T>(dato, nullptr);
+
+            if (primero == nullptr) {
+                primero = nuevoNodo;
+            } else {
+                NodoLista<T>* actual = primero;
+                while (actual->getSiguiente() != nullptr) {
+                    actual = actual->getSiguiente();
+                }
+                actual->setSiguiente(nuevoNodo);
+            }
+
+            largo++;
+        }
+
+        void eliminarEnPosicion(int posicion) {
+            if (posicion < 0 || posicion >= largo || primero == nullptr) {
+                return;
+            }
+
+            if (posicion == 0) {
+                NodoLista<T>* temp = primero;
+                primero = primero->getSiguiente();
+                delete temp;
+            } else {
+                NodoLista<T>* actual = primero;
+                for (int i = 0; i < posicion - 1; i++) {
+                    actual = actual->getSiguiente();
+                }
+
+                NodoLista<T>* temp = actual->getSiguiente();
+                actual->setSiguiente(temp->getSiguiente());
+                delete temp;
+            }
+
+            largo--;
+        }
+
+        T obtenerEnPosicion(int posicion) {
+            if (posicion < 0 || posicion >= largo) {
+                return T();
+            }
+
+            NodoLista<T>* actual = primero;
+            for (int i = 0; i < posicion && actual != nullptr; i++) {
+                actual = actual->getSiguiente();
+            }
+
+            if (actual != nullptr) {
+                return actual->getDato();
+            }
+
+            return T();
+        }
+
+        bool estaVacia() const { return primero == nullptr; }
+
+        int obtenerLargo() const { return largo; }
+
+        ~Lista() {
+            vaciar();
+        }
 };

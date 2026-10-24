@@ -1,35 +1,64 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 
 #include "../Estructuras/Cola/Cola.h"
 
-class Estacion {
-    private:
-        std::string codigo;
-        std::string nombre;
-        std::string barrio;
-        int capacidadAnclajes;
-        int bicisDisponibles;
-        Cola<int> colaEspera;
+class Estacion
+{
+private:
+    std::string codigo;
+    std::string nombre;
+    std::string barrio;
+    int capacidadAnclajes;
+    int bicisDisponibles;
+    Cola<int> colaEspera;
 
-    public:
-        Estacion(std::string codigo, std::string nombre, std::string barrio, int capacidadAnclajes, int bicisDisponibles, Cola<int> colaEspera)
-            : colaEspera(colaEspera) {
-            this->codigo = codigo;
-            this->nombre = nombre;
-            this->barrio = barrio;
-            this->capacidadAnclajes = capacidadAnclajes;
-            this->bicisDisponibles = bicisDisponibles;
+public:
+// Cada estacion inicializa su propia cola de espera vacia.
+// No se recibe una Cola por parametro porque la clase Cola no permite copias.
+//Osea que borre el parametro porque se rompia todo, basicamente.
+    Estacion(std::string codigo, std::string nombre,
+            std::string barrio, int capacidadAnclajes,
+            int bicisDisponibles)
+            : colaEspera()
+    {
+        this->codigo = codigo;
+        this->nombre = nombre;
+        this->barrio = barrio;
+        this->capacidadAnclajes = capacidadAnclajes;
+        this->bicisDisponibles = bicisDisponibles;
+    }
+
+    std::string getCodigo() { return codigo; }
+
+    int getCapacidadAnclajes() { 
+        return capacidadAnclajes;
+    }
+    double calcularPorcentajeOcupacion() { 
+        if(capacidadAnclajes == 0){
+            return 0.0;
         }
 
-        std::string getCodigo() { return std::string(); }
+        int ocupacion = capacidadAnclajes - bicisDisponibles;
+        double porcentaje = (ocupacion * 100) / capacidadAnclajes;
+        
+        return porcentaje; 
+        }
 
-        double calcularPorcentajeOcupacion() { return 0.0; }
+    int getBicisDisponibles() { return bicisDisponibles; }
 
-        bool retirarBicicleta(int dni) { return false; }
+    bool retirarBicicleta(int dni) { return false; }
 
-        int devolverBicicleta() { return 0; }
+    int devolverBicicleta() { return 0; }
 
-        void mostrarInformacion() { }
+    void mostrarInformacion()
+    {
+        std::cout << "Codigo: " << codigo << std::endl;
+        std::cout << "Nombre: " << nombre << std::endl;
+        std::cout << "Barrio: " << barrio << std::endl;
+        std::cout << "Capacidad de anclajes: " << capacidadAnclajes << std::endl;
+        std::cout << "Bicis disponibles: " << bicisDisponibles << std::endl;
+    }
 };

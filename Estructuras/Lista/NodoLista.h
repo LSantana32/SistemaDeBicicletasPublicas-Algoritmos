@@ -7,14 +7,19 @@ class NodoLista {
         NodoLista<T>* siguiente;
 
     public:
-        NodoLista(T dato, NodoLista<T>* siguiente) {
-            this->dato = dato;
-            this->siguiente = siguiente;
+        NodoLista(T dato, NodoLista<T>* siguiente = nullptr)
+            : dato(dato), siguiente(siguiente) {
         }
 
-        T getDato() { return T(); }
+        T getDato() const {
+            return dato;
+        }
 
-        NodoLista<T>* getSiguiente() { return nullptr; }
+        NodoLista<T>* getSiguiente() const {
+            return siguiente;
+        }
 
-        void setSiguiente(NodoLista<T>* nodo) { }
+        void setSiguiente(NodoLista<T>* nodo) {
+            siguiente = nodo;
+        }
 };

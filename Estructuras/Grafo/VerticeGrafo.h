@@ -20,13 +20,71 @@ class VerticeGrafo {
             this->anterior = anterior;
         }
 
-        T getDato() { return T(); }
+        T getDato() { return dato; }
 
-        void agregarAristaHacia(VerticeGrafo<T>* destino) { }
+        VerticeGrafo<T>* getSiguiente() { return siguiente; }
 
-        void eliminarAristaHacia(VerticeGrafo<T>* destino) { }
+        void setSiguiente(VerticeGrafo<T>* nodo) { siguiente = nodo; }
 
-        AristaGrafo<T>* getPrimeraArista() { return nullptr; }
+        void agregarAristaHacia(VerticeGrafo<T>* destino) {
+            if (destino == nullptr || destino == this) {
+                return;
+            }
 
-        ~VerticeGrafo() { }
+            AristaGrafo<T>* actual = primeraArista;
+            while (actual != nullptr) {
+                if (actual->getDestino() == destino) {
+                    return;
+                }
+                actual = actual->getSiguiente();
+            }
+
+            AristaGrafo<T>* nuevaArista =
+                new AristaGrafo<T>(destino, primeraArista);
+            primeraArista = nuevaArista;
+        }
+
+        void eliminarAristaHacia(VerticeGrafo<T>* destino) {
+            AristaGrafo<T>* actual = primeraArista;
+            AristaGrafo<T>* anterior = nullptr;
+
+            while (actual != nullptr) {
+                AristaGrafo<T>* siguienteArista = actual->getSiguiente();
+
+                if (actual->getDestino() == destino) {
+                    if (anterior == nullptr) {
+                        primeraArista = siguienteArista;
+                    } else {
+                        anterior->setSiguiente(siguienteArista);
+                    }
+                    delete actual;
+                } else {
+                    anterior = actual;
+                }
+
+                actual = siguienteArista;
+            }
+        }
+
+        void setVisitado(bool visitado) { 
+            this->visitado = visitado; 
+        }
+
+        bool getVisitado() { 
+            return visitado; 
+        }
+
+        AristaGrafo<T>* getPrimeraArista() { 
+            return primeraArista; 
+        }
+
+        ~VerticeGrafo() {
+            AristaGrafo<T>* actual = primeraArista;
+
+            while (actual != nullptr) {
+                AristaGrafo<T>* siguienteArista = actual->getSiguiente();
+                delete actual;
+                actual = siguienteArista;
+            }
+        }
 };
