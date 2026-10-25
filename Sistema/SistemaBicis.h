@@ -148,42 +148,42 @@ class SistemaBicis {
         }
 
         void listarEstacionesOrdenadas(int criterio) {
-            int cantidad = estaciones.obtenerCantidad();
+            int cantidadEstaciones = estaciones.obtenerCantidad();
 
-            if (cantidad == 0) {
+            if (cantidadEstaciones == 0) {
                 std::cout << "No hay estaciones para listar." << std::endl;
                 return;
             }
 
-            Estacion** arreglo = new Estacion*[cantidad];   //puntero de punteros porque cada elemento del arreglo es un puntero a Estacion. Sigue la misma logica que una lista
-            estaciones.obtenerTodos(arreglo);
+            Estacion** arregloEstaciones = new Estacion*[cantidadEstaciones];   //puntero de punteros porque cada elemento del arreglo es un puntero a Estacion. Sigue la misma logica que una lista
+            estaciones.obtenerTodos(arregloEstaciones);
 
             bool porCapacidad = (criterio == 1);
 
-            for (int i = 0; i < cantidad - 1; i++) {
-                for (int j = 0; j < cantidad - 1 - i; j++) {
-                    int izquierda = porCapacidad ? arreglo[j]->getCapacidadAnclajes()
-                                                : arreglo[j]->getBicisDisponibles();
-                    int derecha = porCapacidad ? arreglo[j + 1]->getCapacidadAnclajes()
-                                                : arreglo[j + 1]->getBicisDisponibles();
+            for (int i = 0; i < cantidadEstaciones - 1; i++) {
+                for (int j = 0; j < cantidadEstaciones - 1 - i; j++) {
+                    int nodoIzquierdo = porCapacidad ? arregloEstaciones[j]->getCapacidadAnclajes()
+                                                : arregloEstaciones[j]->getBicisDisponibles();
+                    int nodoDerecho = porCapacidad ? arregloEstaciones[j + 1]->getCapacidadAnclajes()
+                                                : arregloEstaciones[j + 1]->getBicisDisponibles();
 
-                    if (derecha < izquierda) {
-                        Estacion* aux = arreglo[j];
-                        arreglo[j] = arreglo[j + 1];
-                        arreglo[j + 1] = aux;
+                    if (nodoDerecho < nodoIzquierdo) {
+                        Estacion* aux = arregloEstaciones[j];
+                        arregloEstaciones[j] = arregloEstaciones[j + 1];
+                        arregloEstaciones[j + 1] = aux;
                     }
                 }
             }
 
-            for (int i = 0; i < cantidad; i++) {
-                arreglo[i]->mostrarInformacion();
+            for (int i = 0; i < cantidadEstaciones; i++) {
+                arregloEstaciones[i]->mostrarInformacion();
 
-                if (i < cantidad - 1) {
+                if (i < cantidadEstaciones - 1) {
                     std::cout << "--------------------\n";
                 }
             }
 
-            delete[] arreglo;
+            delete[] arregloEstaciones;
         }
 
         void listarEstacionesConBajaOcupacion() {
@@ -343,7 +343,38 @@ class SistemaBicis {
 
         int contarBicicletasAveriadas() { return 0; }
 
-        void listarBicicletasConMasKm(int kmMinimo) { }
+        void listarBicicletasConMasKm(int kmMinimo) {
+            int cantidadBicicletas = bicicletas.obtenerCantidad(); //1
+
+            if (cantidadBicicletas == 0) { //1
+                std::cout << "No hay bicicletas para listar.\n"; 
+                return;
+            }
+
+            Bicicleta** arregloBicis = new Bicicleta*[cantidadBicicletas];  //2
+            bicicletas.obtenerEnInorder(arregloBicis); //n
+
+            bool encontrado = false; //1
+
+            for (int i = 0; i < cantidadBicicletas; i++) { // 1 + n+n *(...
+                if (arregloBicis[i] != nullptr //+1
+                    && arregloBicis[i]->getKilometros() > kmMinimo) {
+                    if (encontrado) { //+1
+                        std::cout << "--------------------\n";
+                    }
+
+                    arregloBicis[i]->mostrarInformacion(); //+1
+                    encontrado = true; //+1)
+                }
+            }
+
+            delete[] arregloBicis; //1
+
+            if (!encontrado) { //1
+                std::cout << "No hay bicicletas con mas de " << kmMinimo
+                        << " kilometros.\n";
+            }                                                     //1+1+2+n+1+1+n+n*(1+1+1+1)+1+1= 6 + 2n + 4n + 2 = 8 +6n
+        }                                                        // O(n) 
 
         void mostrarAlturaDelArbol() {
             int altura = bicicletas.calcularAltura();
