@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 class Bicicleta {
@@ -19,13 +20,29 @@ class Bicicleta {
             this->kilometros = kilometros;
         }
 
-        int getId() { return 0; }
+        int getId() { return id; }
 
-        int getKilometros() { return 0; }
+        std::string getCodigoEstacion() { return codigoEstacion; }
 
-        bool estaAveriada() { return false; }
+        std::string getEstado() { return estado; }
 
-        bool esElectrica() { return false; }
+        void setCodigoEstacion(std::string codigo) {
+            codigoEstacion = codigo;
+        }
 
-        void mostrarInformacion() { }
+        int getKilometros() { return kilometros; }
+
+        bool estaAveriada() { return estado == "Averiada"; }
+
+        bool esElectrica() { return tipo == "Electrica"; }
+
+        void iniciarViaje() { codigoEstacion = ""; }
+
+        void mostrarInformacion() { 
+            std::cout << "ID: " << id << std::endl;
+            std::cout << "Estacion: " << codigoEstacion << std::endl;
+            std::cout << "Tipo: " << tipo << std::endl;
+            std::cout << "Estado: " << estado << std::endl;
+            std::cout << "Kilometros: " << kilometros << std::endl;
+        }
 };

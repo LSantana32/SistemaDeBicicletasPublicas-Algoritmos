@@ -49,9 +49,32 @@ public:
 
     int getBicisDisponibles() { return bicisDisponibles; }
 
-    bool retirarBicicleta(int dni) { return false; }
+    bool hayBicicletasDisponibles() {
+        return bicisDisponibles > 0;
+    }
 
-    int devolverBicicleta() { return 0; }
+    bool retirarBicicleta(int dni) { 
+        if (bicisDisponibles > 0) {
+            bicisDisponibles--;
+            return true;
+        } else {
+            colaEspera.encolar(dni);
+            return false;
+        }
+    }
+
+    int devolverBicicleta() { 
+        if(!colaEspera.estaVacia()){
+            return colaEspera.desencolar();
+        }
+        
+        if (bicisDisponibles < capacidadAnclajes) {
+            bicisDisponibles++;
+            return -1; // Indica que no hay usuarios en espera
+        } else {
+            return -2; // Indica que la estacion esta llena
+        }
+    }
 
     void mostrarInformacion()
     {

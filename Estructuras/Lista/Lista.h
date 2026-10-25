@@ -121,6 +121,21 @@ class Lista {
 
         int obtenerLargo() const { return largo; }
 
+        T obtenerUltimoViajeDe(int dni){
+            NodoLista<T>* actual = primero;
+            T ultimoViaje = T();
+
+            while (actual != nullptr) {
+                T viaje = actual->getDato();
+                if (viaje != nullptr && viaje->getDniUsuario() == dni) {
+                    ultimoViaje = viaje;
+                }
+                actual = actual->getSiguiente();
+            }
+
+            return ultimoViaje;
+        }
+
         ~Lista() {
             vaciar();
         }

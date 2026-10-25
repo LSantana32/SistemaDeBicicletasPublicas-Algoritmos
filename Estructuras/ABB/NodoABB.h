@@ -16,15 +16,15 @@ class NodoABB {
             this->derecho = derecho;
         }
 
-        K getClave() { return K(); }
+        K getClave() { return clave; }
 
-        V getDato() { return V(); }
+        V getDato() { return dato; }
 
-        NodoABB<K, V>* getIzquierdo() { return nullptr; }
+        NodoABB<K, V>* getIzquierdo() { return izquierdo; }
 
-        NodoABB<K, V>* getDerecho() { return nullptr; }
+        NodoABB<K, V>* getDerecho() { return derecho; }
 
-        void setIzquierdo(NodoABB<K, V>* nodo) { }
+        void setIzquierdo(NodoABB<K, V>* nodo) { izquierdo = nodo;}
 
-        void setDerecho(NodoABB<K, V>* nodo) { }
+        void setDerecho(NodoABB<K, V>* nodo) { derecho = nodo;}
 };

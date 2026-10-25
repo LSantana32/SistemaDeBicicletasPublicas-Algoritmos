@@ -59,6 +59,24 @@ class SistemaBicis {
                     ciclovias.agregarArista(origen, destino);
                 }
             }
+
+            
+            std::ifstream archivoBicicletas("Archivos/bicicletas.txt");
+
+            while (std::getline(archivoBicicletas, linea)) {
+                std::istringstream flujo(linea);
+                
+                int id;
+                std::string codigoEstacion;
+                std::string tipo;
+                std::string estado;
+                int kilometros;
+
+                if (flujo >> id >> codigoEstacion >> tipo >> estado >> kilometros) {
+                    agregarBicicleta(id, codigoEstacion, tipo, estado, kilometros);
+                }
+            }
+
         }
 
         void mostrarInformacionDeEstacionPorCodigo(std::string codigo) { 
@@ -95,6 +113,28 @@ class SistemaBicis {
             std::cout << "Estacion " << codigo << " agregada.\n";
         }
 
+        void agregarBicicleta(int id, std::string codigoEstacion, std::string tipo, std::string estado, int kilometros) {
+            Estacion* estacion = nullptr;
+            if (!estaciones.buscar(codigoEstacion, estacion)) {
+                std::cout << "No se pudo agregar la bicicleta " << id
+                        << ": la estacion " << codigoEstacion
+                        << " no existe.\n";
+                return;
+            }
+
+            Bicicleta* bicicleta = new Bicicleta(
+                id, codigoEstacion, tipo, estado, kilometros);
+
+            if (!bicicletas.insertar(id, bicicleta)) {
+                std::cout << "No se pudo agregar la bicicleta " << id
+                        << ": el ID ya existe.\n";
+                delete bicicleta;
+                return;
+            }
+
+            std::cout << "Bicicleta " << id << " agregada.\n";
+        }
+
         bool eliminarEstacion(std::string codigo) {
             Estacion* estacion = nullptr;
             if (!estaciones.buscar(codigo, estacion)) {
@@ -108,42 +148,42 @@ class SistemaBicis {
         }
 
         void listarEstacionesOrdenadas(int criterio) {
-            int cantidad = estaciones.obtenerCantidad();
+            int cantidadEstaciones = estaciones.obtenerCantidad();
 
-            if (cantidad == 0) {
+            if (cantidadEstaciones == 0) {
                 std::cout << "No hay estaciones para listar." << std::endl;
                 return;
             }
 
-            Estacion** arreglo = new Estacion*[cantidad];   //puntero de punteros porque cada elemento del arreglo es un puntero a Estacion. Sigue la misma logica que una lista
-            estaciones.obtenerTodos(arreglo);
+            Estacion** arregloEstaciones = new Estacion*[cantidadEstaciones];   //puntero de punteros porque cada elemento del arreglo es un puntero a Estacion. Sigue la misma logica que una lista
+            estaciones.obtenerTodos(arregloEstaciones);
 
             bool porCapacidad = (criterio == 1);
 
-            for (int i = 0; i < cantidad - 1; i++) {
-                for (int j = 0; j < cantidad - 1 - i; j++) {
-                    int izquierda = porCapacidad ? arreglo[j]->getCapacidadAnclajes()
-                                                : arreglo[j]->getBicisDisponibles();
-                    int derecha = porCapacidad ? arreglo[j + 1]->getCapacidadAnclajes()
-                                                : arreglo[j + 1]->getBicisDisponibles();
+            for (int i = 0; i < cantidadEstaciones - 1; i++) {
+                for (int j = 0; j < cantidadEstaciones - 1 - i; j++) {
+                    int nodoIzquierdo = porCapacidad ? arregloEstaciones[j]->getCapacidadAnclajes()
+                                                : arregloEstaciones[j]->getBicisDisponibles();
+                    int nodoDerecho = porCapacidad ? arregloEstaciones[j + 1]->getCapacidadAnclajes()
+                                                : arregloEstaciones[j + 1]->getBicisDisponibles();
 
-                    if (derecha < izquierda) {
-                        Estacion* aux = arreglo[j];
-                        arreglo[j] = arreglo[j + 1];
-                        arreglo[j + 1] = aux;
+                    if (nodoDerecho < nodoIzquierdo) {
+                        Estacion* aux = arregloEstaciones[j];
+                        arregloEstaciones[j] = arregloEstaciones[j + 1];
+                        arregloEstaciones[j + 1] = aux;
                     }
                 }
             }
 
-            for (int i = 0; i < cantidad; i++) {
-                arreglo[i]->mostrarInformacion();
+            for (int i = 0; i < cantidadEstaciones; i++) {
+                arregloEstaciones[i]->mostrarInformacion();
 
-                if (i < cantidad - 1) {
+                if (i < cantidadEstaciones - 1) {
                     std::cout << "--------------------\n";
                 }
             }
 
-            delete[] arreglo;
+            delete[] arregloEstaciones;
         }
 
         void listarEstacionesConBajaOcupacion() {
@@ -268,19 +308,178 @@ class SistemaBicis {
                     << totalMinutos << '\n';
         }
 
-        Bicicleta* buscarBicicletaPorId(int id) { return nullptr; }
+        Bicicleta* buscarBicicletaPorId(int id) { 
+            Bicicleta* resultado = nullptr;
 
-        void listarBicicletasOrdenadasPorId() { }
+            if(bicicletas.buscar(id, resultado)) {
+                return resultado;
+            }
+            return nullptr;
+        }
+
+        void listarBicicletasOrdenadasPorId() {
+            int cantidad = bicicletas.obtenerCantidad();
+
+            if(cantidad == 0){
+                std::cout << "No hay bicicletas para listar.\n";
+                return;
+            }
+
+            Bicicleta** arreglo = new Bicicleta*[cantidad];
+
+            bicicletas.obtenerEnInorder(arreglo);
+
+            for (int i = 0; i < cantidad; i++) {
+                if (arreglo[i] != nullptr) {
+                    arreglo[i]->mostrarInformacion();
+
+                    if (i < cantidad - 1) {
+                        std::cout << "--------------------\n";
+                    }
+                }
+            }
+            delete[] arreglo;
+        }
 
         int contarBicicletasAveriadas() { return 0; }
 
-        void listarBicicletasConMasKm(int kmMinimo) { }
+        void listarBicicletasConMasKm(int kmMinimo) {
+            int cantidadBicicletas = bicicletas.obtenerCantidad(); //1
 
-        void mostrarAlturaDelArbol() { }
+            if (cantidadBicicletas == 0) { //1
+                std::cout << "No hay bicicletas para listar.\n"; 
+                return;
+            }
 
-        void retirarBicicleta(std::string codigoEstacion, int dni) { }
+            Bicicleta** arregloBicis = new Bicicleta*[cantidadBicicletas];  //2
+            bicicletas.obtenerEnInorder(arregloBicis); //n
 
-        void devolverBicicleta(std::string codigoEstacion) { }
+            bool encontrado = false; //1
+
+            for (int i = 0; i < cantidadBicicletas; i++) { // 1 + n+n *(...
+                if (arregloBicis[i] != nullptr //+1
+                    && arregloBicis[i]->getKilometros() > kmMinimo) {
+                    if (encontrado) { //+1
+                        std::cout << "--------------------\n";
+                    }
+
+                    arregloBicis[i]->mostrarInformacion(); //+1
+                    encontrado = true; //+1)
+                }
+            }
+
+            delete[] arregloBicis; //1
+
+            if (!encontrado) { //1
+                std::cout << "No hay bicicletas con mas de " << kmMinimo
+                        << " kilometros.\n";
+            }                                                     //1+1+2+n+1+1+n+n*(1+1+1+1)+1+1= 6 + 2n + 4n + 2 = 8 +6n
+        }                                                        // O(n) 
+
+        void mostrarAlturaDelArbol() {
+            int altura = bicicletas.calcularAltura();
+            std::cout << "Altura del arbol de bicicletas: " << altura << std::endl;
+        }
+
+        void retirarBicicleta(std::string codigoEstacion, int dni, int fechaActual) {
+            Estacion* estacion = nullptr;
+            //Verificar que la estacion existe.
+            if (!estaciones.buscar(codigoEstacion, estacion)) {
+                std::cout << "Estacion con codigo " << codigoEstacion << " no encontrada." << std::endl;
+                return;
+            }
+
+            //Verificar que el usuario no tiene un viaje en curso. Un viaje esta en curso cuando no tiene estacion destino.
+            Viaje* ultimoViaje = viajes.obtenerUltimoViajeDe(dni);
+            if (ultimoViaje != nullptr && ultimoViaje->getEstacionDestino() == "") {
+                std::cout << "El usuario con DNI " << dni << " ya tiene un viaje en curso." << std::endl;
+                return;
+            }   
+
+            if (!estacion->hayBicicletasDisponibles()) {
+                estacion->retirarBicicleta(dni);
+                std::cout << "No hay bicicletas disponibles en la estacion " << codigoEstacion
+                            << ". Se ha agregado a la cola de espera del usuario con DNI " << dni << "." << std::endl;
+                return;
+            }
+
+            Bicicleta* bicicleta =
+                bicicletas.obtenerBicicletaDisponibleEnEstacion(codigoEstacion);
+            if (bicicleta == nullptr) {
+                std::cout << "No hay una bicicleta disponible registrada en la estacion "
+                            << codigoEstacion << ".\n";
+                return;
+            }
+
+            if (estacion->retirarBicicleta(dni)) {
+                bicicleta->iniciarViaje();
+
+                // El viaje queda abierto hasta que el usuario devuelve la bicicleta.
+                Viaje* ultimoViaje =
+                    viajes.obtenerEnPosicion(viajes.obtenerLargo() - 1);
+                int nuevoId = ultimoViaje != nullptr ? ultimoViaje->getId() + 1 : 1;
+                Viaje* viaje = new Viaje(
+                    nuevoId, bicicleta->getId(), dni, codigoEstacion, "",
+                    fechaActual, 0);
+                viajes.insertarAlFinal(viaje);
+
+                std::cout << "Bicicleta retirada exitosamente de la estacion "
+                            << codigoEstacion << "." << std::endl;
+            }
+        }
+
+        void devolverBicicleta( std::string codigoEstacion, int dni, int duracionMin) {
+            Estacion* estacion = nullptr;
+            if (!estaciones.buscar(codigoEstacion, estacion)) {
+                std::cout << "Estacion con codigo " << codigoEstacion << " no encontrada." << std::endl;
+                return;
+            }
+
+            Viaje* viaje = viajes.obtenerUltimoViajeDe(dni);
+            if (viaje == nullptr || viaje->getEstacionDestino() != "") {
+                std::cout << "El usuario con DNI " << dni
+                            << " no tiene un viaje en curso.\n";
+                return;
+            }
+
+            Bicicleta* bicicleta = nullptr;
+            if (!bicicletas.buscar(viaje->getIdBici(), bicicleta)
+                || bicicleta == nullptr) {
+                std::cout << "No se encontro la bicicleta del viaje del usuario "
+                            << dni << ".\n";
+                return;
+            }
+
+            int resultado = estacion->devolverBicicleta();
+            if (resultado == -2) {
+                std::cout << "No se puede devolver la bicicleta a la estacion " << codigoEstacion
+                                << ". La estacion esta llena." << std::endl;
+                return;
+            }
+
+            bicicleta->setCodigoEstacion(codigoEstacion);
+            viaje->setEstacionDestino(codigoEstacion);
+            viaje->setDuracionMin(duracionMin);
+
+            if (resultado == -1) {
+                std::cout << "Bicicleta devuelta exitosamente a la estacion " << codigoEstacion
+                            << ". No hay usuarios en espera." << std::endl;
+            } else {
+                std::cout << "Bicicleta devuelta exitosamente a la estacion " << codigoEstacion
+                            << ". Se ha asignado al usuario con DNI " << resultado
+                            << " que estaba en espera." << std::endl;
+
+                Viaje* ultimoViaje =
+                    viajes.obtenerEnPosicion(viajes.obtenerLargo() - 1);
+                int nuevoId =
+                    ultimoViaje != nullptr ? ultimoViaje->getId() + 1 : 1;
+                Viaje* nuevoViaje = new Viaje(
+                    nuevoId, viaje->getIdBici(), resultado, codigoEstacion, "",
+                    viaje->getFecha(), 0);
+                viajes.insertarAlFinal(nuevoViaje);
+                bicicleta->iniciarViaje();
+            }
+        }
 
         void enviarBicicletaAlTaller(int idBicicleta, int prioridad) { }
 
