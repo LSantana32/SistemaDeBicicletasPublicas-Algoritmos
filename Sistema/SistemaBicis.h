@@ -26,7 +26,7 @@ class SistemaBicis {
     public:
         SistemaBicis()
             : estaciones(101), viajes(nullptr, 0), ciclovias(nullptr, 0), bicicletas(nullptr, 0), 
-            taller(nullptr, 0, 0) {
+            taller() {
         }
 
         void cargarDatosDesdeArchivos() {
@@ -341,7 +341,26 @@ class SistemaBicis {
             delete[] arreglo;
         }
 
-        int contarBicicletasAveriadas() { return 0; }
+        int contarBicicletasAveriadas() {
+            int cantidad = bicicletas.obtenerCantidad();
+            if (cantidad == 0) {
+                return 0;
+            }
+
+            Bicicleta** arreglo = new Bicicleta*[cantidad];
+            bicicletas.obtenerEnInorder(arreglo);  
+
+            int averiadas = 0;
+            for (int i = 0; i < cantidad; i++) {
+                if (arreglo[i]->estaAveriada()) {
+                    averiadas++;
+                }
+            }
+
+            delete[] arreglo;   
+            return averiadas;
+
+        }
 
         void listarBicicletasConMasKm(int kmMinimo) {
             int cantidadBicicletas = bicicletas.obtenerCantidad(); //1
@@ -481,9 +500,41 @@ class SistemaBicis {
             }
         }
 
-        void enviarBicicletaAlTaller(int idBicicleta, int prioridad) { }
+        void enviarBicicletaAlTaller(int idBicicleta, int prioridad) { 
+            Bicicleta* bicicleta = buscarBicicletaPorId(idBicicleta);
+            if (bicicleta == nullptr) {
+                std::cout << "No existe una bicicleta con ID " << idBicicleta << "." << std::endl;
+                return;
+            }
+            if (!bicicleta->estaAveriada()) {
+                std::cout << "La bicicleta " << idBicicleta
+                          << " no esta averiada: no se envia al taller." << std::endl;
+                return;
+            }
+            if (prioridad < 1 || prioridad > 3) {
+                std::cout << "La prioridad tiene que ser 1, 2 o 3." << std::endl;
+                return;
+            }
+            if (bicicleta->esElectrica()) {
+                prioridad = 1;   
+            }
 
-        void repararSiguienteBicicleta() { }
+            taller.insertar(bicicleta, prioridad);
+            std::cout << "Bicicleta " << idBicicleta << " enviada al taller con prioridad "
+                      << prioridad << "." << std::endl;
+        }
+
+        void repararSiguienteBicicleta() { 
+            if (taller.estaVacio()) {
+                std::cout << "No hay bicicletas en el taller." << std::endl;
+                return;
+            }
+
+            Bicicleta* bicicleta = taller.extraerMinimo();
+            bicicleta->setEstado("OK");
+            std::cout << "Se reparo la bicicleta " << bicicleta->getId() << ":" << std::endl;
+            bicicleta->mostrarInformacion();
+        }
 
         void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) { }
 
