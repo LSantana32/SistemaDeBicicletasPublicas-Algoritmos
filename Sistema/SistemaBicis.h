@@ -77,6 +77,26 @@ class SistemaBicis {
                 }
             }
 
+            std::ifstream archivoViajes("Archivos/viajes.txt");
+
+            while (std::getline(archivoViajes, linea)) {
+                std::istringstream flujo(linea);
+
+                int id;
+                int idBici;
+                int dniUsuario;
+                std::string estacionOrigen;
+                std::string estacionDestino;
+                int fecha;
+                int duracionMin;
+
+                if (flujo >> id >> idBici >> dniUsuario >> estacionOrigen
+                        >> estacionDestino >> fecha >> duracionMin) {
+                    agregarViaje(new Viaje(id, idBici, dniUsuario, estacionOrigen,
+                                            estacionDestino, fecha, duracionMin));
+                }
+            }
+
         }
 
         void mostrarInformacionDeEstacionPorCodigo(std::string codigo) { 
@@ -534,7 +554,7 @@ class SistemaBicis {
             Compejidad Algoritmica
             n = cantidad de viajes en el sistema
             b = cantidad de bicicletas en el sistema
-            T(n) = b + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + n + 1 = 14 + b + n = O(b + n)
+            T(n) = b + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + log n + 1 = 14 + b + log n = O(b + log n)
         */
         void enviarBicicletaAlTaller(int idBicicleta, int prioridad) { 
             Bicicleta* bicicleta = buscarBicicletaPorId(idBicicleta); // b
@@ -555,7 +575,7 @@ class SistemaBicis {
                 prioridad = 1; // 2
             }
 
-            taller.insertar(bicicleta, prioridad); // n
+            taller.insertar(bicicleta, prioridad); // log n
             std::cout << "Bicicleta " << idBicicleta << " enviada al taller con prioridad "
                         << prioridad << "." << std::endl; // 1
         }
@@ -563,7 +583,7 @@ class SistemaBicis {
         /*
             Compejidad Algoritmica
             n = cantidad de bicicletas en el taller
-            T(n) = 2 + 1 + 1 + n + 1 + 1 + 1 = 7 + n = O(n)
+            T(n) = 2 + 1 + 1 + n + 1 + 1 + 1 = 7 + log n = O(log n)
         */
         void repararSiguienteBicicleta() { 
             if (taller.estaVacio()) { // 2
@@ -571,7 +591,7 @@ class SistemaBicis {
                 return; // 1
             }
 
-            Bicicleta* bicicleta = taller.extraerMinimo(); // n
+            Bicicleta* bicicleta = taller.extraerMinimo(); // log n 
             bicicleta->setEstado("OK"); // 1
             std::cout << "Se reparo la bicicleta " << bicicleta->getId() << ":" << std::endl; // 1
             bicicleta->mostrarInformacion(); // 1

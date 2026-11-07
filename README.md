@@ -129,19 +129,31 @@ El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo,
 
 **Complejidad temporal:** \(O(n)\)
 
-Se eligió una lista enlazada para almacenar los viajes porque permite recorrerlos secuencialmente sin modificar la estructura existente del sistema. Como no existe un índice que permita acceder directamente a los viajes de un usuario por su DNI, es necesario recorrer la lista completa para encontrar todos los viajes correspondientes y sumar sus duraciones. Por este motivo, la complejidad temporal es \(O(n)\), donde \(n\) representa la cantidad total de viajes almacenados.
+Se utiliza una lista enlazada para almacenar los viajes, ya que permite recorrerlos secuencialmente sin necesidad de índices adicionales. Como no existe un índice por estación de origen y fecha, en el peor caso hay que recorrer todos los viajes comparando la estación y el rango de fechas, por lo que la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
 
 **2. Viajes de un usuario por DNI y total de minutos pedaleados**
 
 **Complejidad temporal:** \(O(n)\)
 
-Se reutilizó la lista enlazada de viajes existente, ya que permite examinar cada registro y comprobar si cumple con las condiciones de estación de origen y rango de fechas. Como no se dispone de un índice organizado por estación y fecha, en el peor caso es necesario recorrer todos los viajes para obtener la cantidad solicitada. Por lo tanto, la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
+Se reutiliza la lista enlazada de viajes: se recorre cada registro comparando el DNI y, cuando coincide, se acumula la duración del viaje. Al no disponer de un índice por DNI, en el peor caso es necesario visitar todos los viajes, por lo que la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
+
+**3. Bicicletas con más de X kilómetros**
+
+**Complejidad temporal:** \(O(b)\)
+
+Las bicicletas se almacenan en un árbol binario de búsqueda. Para listarlas se obtiene el recorrido *inorder* en un arreglo, que visita cada nodo una vez, y luego se filtra por kilómetros con un recorrido lineal adicional. Ambas pasadas son \(O(b)\), donde \(b\) es la cantidad total de bicicletas, por lo que el costo total es \(O(b)\).
+
+**4. Cola de espera por estación (retiro y devolución)**
+
+**Complejidad temporal:** retirar y devolver \(O(b + n)\) en el peor caso; encolar y desencolar \(O(1)\).
+
+Cada estación tiene su propia cola enlazada FIFO, por lo que encolar y desencolar son \(O(1)\). El retiro y la devolución combinan la búsqueda de la estación en la tabla hash (\(O(1)\) promedio), el recorrido de la lista de viajes para detectar un viaje en curso \(O(n)\), la búsqueda de la bicicleta en el ABB (\(O(b)\) en el peor caso) y la inserción al final de la lista de viajes \(O(n)\). Por eso el costo total es \(O(b + n)\), con \(b\) bicicletas y \(n\) viajes.
 
 **5. Taller de reparaciones (min-heap)**
 
-**Complejidad temporal:** insertar \(O(\log n)\) y extraer la más urgente \(O(\log n)\)
+**Complejidad temporal:** insertar \(O(b + log m)\) y extraer la más urgente \(O(log m)\).
 
-El taller solo necesita dos operaciones: agregar una bicicleta averiada y sacar la más urgente. El heap mantiene siempre la de menor prioridad en la raíz, y las dos operaciones recorren como mucho la altura del árbol, que es \(\log n\). Con una lista ordenada, insertar costaría \(O(n)\); con una desordenada, extraer la más urgente costaría \(O(n)\).
+El taller solo necesita insertar una bicicleta averiada y extraer la más urgente. Insertar requiere ubicar la bicicleta en el ABB por ID (\(O(b)\) en el peor caso) y luego subir el elemento en el heap \(O(log m)\); extraer la más urgente baja el elemento desde la raíz \(O(log m)\), donde \(m\) es la cantidad de bicicletas en el taller. Con una lista ordenada, insertar costaría \(O(n)\); con una desordenada, extraer la más urgente costaría \(O(n)\).
 
 **Prioridades del taller:**
 
@@ -151,10 +163,6 @@ El taller solo necesita dos operaciones: agregar una bicicleta averiada y sacar 
 - Las bicicletas eléctricas averiadas ingresan siempre con prioridad 1.
 
 La cola de prioridad debe permitir insertar una bicicleta y extraer la más urgente.
-
-**Análisis requerido:**
-
-Para cada punto, indicar la complejidad temporal en notación Big O y explicar en dos o tres oraciones por qué se eligió esa estructura de datos.
 
 ### C. Registro de bicicletas con árbol binario de búsqueda
 
