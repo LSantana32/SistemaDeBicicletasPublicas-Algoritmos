@@ -41,8 +41,7 @@ public:
             return 0.0;
         }
 
-        int ocupacion = capacidadAnclajes - bicisDisponibles;
-        double porcentaje = (ocupacion * 100) / capacidadAnclajes;
+        double porcentaje = (bicisDisponibles * 100.0) / capacidadAnclajes;
         
         return porcentaje; 
         }
