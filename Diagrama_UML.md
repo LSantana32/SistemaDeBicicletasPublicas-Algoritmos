@@ -65,6 +65,7 @@ classDiagram
         -int kilometros
         +getId() int
         +getKilometros() int
+        +setEstado(string nuevoEstado) void
         +estaAveriada() bool
         +esElectrica() bool
         +mostrarInformacion() void

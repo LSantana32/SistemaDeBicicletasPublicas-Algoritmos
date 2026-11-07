@@ -137,6 +137,12 @@ Se eligió una lista enlazada para almacenar los viajes porque permite recorrerl
 
 Se reutilizó la lista enlazada de viajes existente, ya que permite examinar cada registro y comprobar si cumple con las condiciones de estación de origen y rango de fechas. Como no se dispone de un índice organizado por estación y fecha, en el peor caso es necesario recorrer todos los viajes para obtener la cantidad solicitada. Por lo tanto, la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
 
+**5. Taller de reparaciones (min-heap)**
+
+**Complejidad temporal:** insertar \(O(\log n)\) y extraer la más urgente \(O(\log n)\)
+
+El taller solo necesita dos operaciones: agregar una bicicleta averiada y sacar la más urgente. El heap mantiene siempre la de menor prioridad en la raíz, y las dos operaciones recorren como mucho la altura del árbol, que es \(\log n\). Con una lista ordenada, insertar costaría \(O(n)\); con una desordenada, extraer la más urgente costaría \(O(n)\).
+
 **Prioridades del taller:**
 
 - Prioridad 1: máxima urgencia.

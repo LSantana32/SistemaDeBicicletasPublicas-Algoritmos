@@ -26,6 +26,8 @@ class Bicicleta {
 
         std::string getEstado() { return estado; }
 
+        void setEstado(std::string nuevoEstado) { estado = nuevoEstado; }
+
         void setCodigoEstacion(std::string codigo) {
             codigoEstacion = codigo;
         }
