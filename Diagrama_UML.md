@@ -1,4 +1,4 @@
-# Diagrama de clases — Sistema de Bicicletas Públicas (v6)
+# Diagrama de clases — Sistema de Bicicletas Públicas (v7)
 
 > Para verlo en VS Code: abrí este archivo y usá **Ctrl+Shift+V** (Markdown Preview).
 > Mermaid viene soportado de forma nativa en VS Code (1.60+) → no requiere extensiones.
@@ -9,18 +9,21 @@ classDiagram
     class Menu {
         -SistemaBicis* sistema
         +iniciarMenu() void
-        -mostrarOpcionesDelMenu() void
-        -procesarOpcionElegida(int opcion) void
+        +mostrarOpcionesDelMenu() void
+        +procesarOpcionElegida(int opcion) void
+        -leerEntero(string mensaje) int
+        -leerLinea(string mensaje) string
     }
 
     class SistemaBicis {
         -TablaHash~Estacion*~ estaciones
         -Lista~Viaje*~ viajes
         -Grafo~string~ ciclovias
-        -ABB~int, Bicicleta*~ bicicletas
+        -ABB bicicletas
         -HeapMin~Bicicleta*~ taller
         +cargarDatosDesdeArchivos() void
         +mostrarInformacionDeEstacionPorCodigo(string codigo) void
+        +agregarViaje(Viaje* viaje) void
         +agregarEstacion(Estacion* estacion) void
         +eliminarEstacion(string codigo) bool
         +listarEstacionesOrdenadas(int criterio) void
@@ -35,8 +38,8 @@ classDiagram
         +contarBicicletasAveriadas() int
         +listarBicicletasConMasKm(int kmMinimo) void
         +mostrarAlturaDelArbol() void
-        +retirarBicicleta(string codigoEstacion, int dni) void
-        +devolverBicicleta(string codigoEstacion) void
+        +retirarBicicleta(string codigoEstacion, int dni, int fechaActual) void
+        +devolverBicicleta(string codigoEstacion, int dni, int duracionMin) void
         +enviarBicicletaAlTaller(int idBicicleta, int prioridad) void
         +repararSiguienteBicicleta() void
         +planificarRedistribucion(int capacidadCamion, string* codigos, int* faltantes, int cantidad) void
@@ -51,7 +54,10 @@ classDiagram
         -int bicisDisponibles
         -Cola~int~ colaEspera
         +getCodigo() string
+        +getCapacidadAnclajes() int
         +calcularPorcentajeOcupacion() double
+        +getBicisDisponibles() int
+        +hayBicicletasDisponibles() bool
         +retirarBicicleta(int dni) bool
         +devolverBicicleta() int
         +mostrarInformacion() void
@@ -64,10 +70,14 @@ classDiagram
         -string estado
         -int kilometros
         +getId() int
-        +getKilometros() int
+        +getCodigoEstacion() string
+        +getEstado() string
         +setEstado(string nuevoEstado) void
+        +setCodigoEstacion(string codigo) void
+        +getKilometros() int
         +estaAveriada() bool
         +esElectrica() bool
+        +iniciarViaje() void
         +mostrarInformacion() void
     }
 
@@ -82,7 +92,12 @@ classDiagram
         +getFecha() int
         +getDniUsuario() int
         +getEstacionOrigen() string
+        +getEstacionDestino() string
+        +setEstacionDestino(string destino) void
+        +setDuracionMin(int duracion) void
         +getDuracionMin() int
+        +getId() int
+        +getIdBici() int
         +mostrarInformacion() void
     }
 
@@ -118,7 +133,9 @@ classDiagram
         +eliminarVertice(T dato) bool
         +agregarArista(T origen, T destino) void
         +existeVertice(T dato) bool
-        +caminoMasCorto(T origen, T destino, T* camino, int& largo) bool
+        +caminoMasCorto(T origen, T destino, Lista~T~& camino, int& largo) bool
+        +reiniciarVisitas() void
+        -obtenerPadre(Lista~NodoBFS~T~~& nodosBFS, VerticeGrafo~T~* vertice) VerticeGrafo~T~*
         -buscarVertice(T dato) VerticeGrafo~T~*
         -reiniciarMarcas() void
         +~Grafo() void
@@ -127,28 +144,36 @@ classDiagram
     class Lista~T~ {
         -NodoLista~T~* primero
         -int largo
+        +vaciar() void
+        +obtenerPrimero() NodoLista~T~*
         +insertarEnPosicion(T dato, int posicion) void
+        +insertarAlFinal(T dato) void
         +eliminarEnPosicion(int posicion) void
         +obtenerEnPosicion(int posicion) T
         +estaVacia() bool
         +obtenerLargo() int
+        +obtenerUltimoViajeDe(int dni) T
         +~Lista() void
     }
 
-    class ABB~K,V~ {
-        -NodoABB~K,V~* raiz
-        -int cantidad
-        +insertar(K clave, V dato) bool
-        +buscar(K clave, V& resultado) bool
-        +eliminar(K clave) bool
-        +obtenerEnInorder(V* destino) void
-        +calcularAltura() int
-        +obtenerCantidad() int
-        +estaVacio() bool
-        -alturaRecursiva(NodoABB~K,V~* nodo) int
-        -liberarPostorder(NodoABB~K,V~* nodo) void
-        +~ABB() void
-    }
+    class ABB["ABB<K,V>"]
+        ABB : -NodoABB* raiz
+        ABB : -int cantidad
+        ABB : +insertar(K clave, V dato) bool
+        ABB : +buscar(K clave, V& resultado) bool
+        ABB : +eliminar(K clave) bool
+        ABB : +obtenerEnInorder(V* destino) void
+        ABB : +calcularAltura() int
+        ABB : +obtenerCantidad() int
+        ABB : +obtenerBicicletaDisponibleEnEstacion(string clave) V
+        ABB : +estaVacio() bool
+        ABB : -insertarRecursivo(NodoABB* nodo, K clave, V dato, bool& insertado) NodoABB*
+        ABB : -buscarRecursivo(NodoABB* nodo, K clave) NodoABB*
+        ABB : -inorderRecursivo(NodoABB* nodo, V* destino, int& indice) void
+        ABB : -alturaRecursiva(NodoABB* nodo) int
+        ABB : -obtenerBicicletaDisponibleEnEstacionRecursivo(NodoABB* nodo, string clave) V
+        ABB : -liberarPostorder(NodoABB* nodo) void
+        ABB : +~ABB() void
 
     class HeapMin~T~ {
         -ElementoHeap~T~* elementos
@@ -174,6 +199,7 @@ classDiagram
         +buscar(string clave, V& resultado) bool
         +eliminar(string clave) bool
         +obtenerTodos(V* destino) void
+        +obtenerTodos(Lista~V~& destino) void
         +obtenerCantidad() int
         +obtenerColisiones() int
         +calcularFactorDeCarga() double
@@ -196,8 +222,12 @@ classDiagram
         -bool visitado
         -VerticeGrafo~T~* anterior
         +getDato() T
+        +getSiguiente() VerticeGrafo~T~*
+        +setSiguiente(VerticeGrafo~T~* nodo) void
         +agregarAristaHacia(VerticeGrafo~T~* destino) void
         +eliminarAristaHacia(VerticeGrafo~T~* destino) void
+        +setVisitado(bool visitado) void
+        +getVisitado() bool
         +getPrimeraArista() AristaGrafo~T~*
         +~VerticeGrafo() void
     }
@@ -210,18 +240,17 @@ classDiagram
         +setSiguiente(NodoLista~T~* nodo) void
     }
 
-    class NodoABB~K,V~ {
-        -K clave
-        -V dato
-        -NodoABB~K,V~* izquierdo
-        -NodoABB~K,V~* derecho
-        +getClave() K
-        +getDato() V
-        +getIzquierdo() NodoABB~K,V~*
-        +getDerecho() NodoABB~K,V~*
-        +setIzquierdo(NodoABB~K,V~* nodo) void
-        +setDerecho(NodoABB~K,V~* nodo) void
-    }
+    class NodoABB["NodoABB<K,V>"]
+        NodoABB : -K clave
+        NodoABB : -V dato
+        NodoABB : -NodoABB* izquierdo
+        NodoABB : -NodoABB* derecho
+        NodoABB : +getClave() K
+        NodoABB : +getDato() V
+        NodoABB : +getIzquierdo() NodoABB*
+        NodoABB : +getDerecho() NodoABB*
+        NodoABB : +setIzquierdo(NodoABB* nodo) void
+        NodoABB : +setDerecho(NodoABB* nodo) void
 
     class ElementoHeap~T~ {
         -T dato
@@ -248,29 +277,40 @@ classDiagram
         +setSiguiente(AristaGrafo~T~* arista) void
     }
 
+    class NodoBFS~T~ {
+        +VerticeGrafo~T~* vertice
+        +VerticeGrafo~T~* padre
+        +NodoBFS(VerticeGrafo~T~* v, VerticeGrafo~T~* p)
+        +NodoBFS()
+        +getVertice() VerticeGrafo~T~*
+        +getPadre() VerticeGrafo~T~*
+    }
+
     Menu "1" --> "1" SistemaBicis : sistema
 
-    SistemaBicis "1" --> "0..*" Estacion : estaciones
-    SistemaBicis "1" --> "0..*" Bicicleta : bicicletas
-    SistemaBicis "1" --> "0..*" Viaje : viajes
+    SistemaBicis "1" *-- "0..*" Estacion : estaciones
+    SistemaBicis "1" *-- "0..*" Bicicleta : bicicletas
+    SistemaBicis "1" *-- "0..*" Viaje : viajes
     SistemaBicis ..> Redistribuidor : «usa»
 
-    SistemaBicis "1" *-- "1" Grafo~T~ : «T=string»
-    SistemaBicis "1" *-- "1" Lista~T~ : «T=Viaje*»
-    SistemaBicis "1" *-- "1" ABB~K,V~ : «K=int, V=Bicicleta*»
-    SistemaBicis "1" *-- "1" HeapMin~T~ : «T=Bicicleta*»
-    SistemaBicis "1" *-- "1" TablaHash~V~ : «V=Estacion*»
+    SistemaBicis "1" *-- "1" Grafo : «T=string»
+    SistemaBicis "1" *-- "1" Lista : «T=Viaje*»
+    SistemaBicis "1" *-- "1" ABB : «K=int, V=Bicicleta*»
+    SistemaBicis "1" *-- "1" HeapMin : «T=Bicicleta*»
+    SistemaBicis "1" *-- "1" TablaHash : «V=Estacion*»
 
-    Estacion "1" *-- "1" Cola~T~ : «T=int»
+    Estacion "1" *-- "1" Cola : «T=int»
 
-    Lista~T~ "1" *-- "0..*" NodoLista~T~
-    Cola~T~ "1" *-- "0..*" NodoCola~T~
-    Grafo~T~ "1" *-- "0..*" VerticeGrafo~T~
-    VerticeGrafo~T~ "1" *-- "0..*" AristaGrafo~T~
-    AristaGrafo~T~ "0..*" --> "2" VerticeGrafo~T~
-    ABB~K,V~ "1" *-- "0..1" NodoABB~K,V~ : raiz
-    HeapMin~T~ "1" *-- "0..*" ElementoHeap~T~
-    TablaHash~V~ "1" *-- "0..*" NodoHash~V~
+    Lista "1" *-- "0..*" NodoLista
+    Cola "1" *-- "0..*" NodoCola
+    Grafo "1" *-- "0..*" VerticeGrafo
+    Grafo ..> NodoBFS : «usa»
+    VerticeGrafo "1" *-- "0..*" AristaGrafo
+    AristaGrafo "0..*" --> "1" VerticeGrafo : destino
+    ABB "1" *-- "0..1" NodoABB : raiz
+    HeapMin "1" *-- "0..*" ElementoHeap
+    TablaHash "1" *-- "0..*" NodoHash
+    TablaHash ..> Lista : «usa»
 ```
 
 ## Leyenda
@@ -279,5 +319,7 @@ classDiagram
 - `-->` : asociación / dependencia.
 - `..>` : dependencia (uso).
 - `~T~` : parámetro genérico (equivalente a `<T>` en C++).
+- `ABB<K,V>` y `NodoABB<K,V>`: etiqueta visible usada porque Mermaid no admite genéricos con coma.
+- En las relaciones se usa el nombre de clase sin genéricos, como exige Mermaid.
 - `«T=...»` : binding del genérico (instanciación concreta del template).
 - `-` privado, `+` público.
