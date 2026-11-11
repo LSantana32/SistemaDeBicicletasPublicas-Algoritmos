@@ -216,6 +216,17 @@ Las soluciones son:
 - `{PLZ, RET, CON}`
 - `{PLZ, CON, BOE}`
 
+
+**Complejidad temporal**
+
+La complejidad temporal del algoritmo en el peor caso es O(2ⁿ), donde n representa la cantidad de estaciones disponibles.
+
+Esto se debe a que el algoritmo utiliza la tecnica de backtracking para evaluar que estaciones deben formar parte de la solucion. Para cada estacion existen dos posibilidades: incluirla en el subconjunto o excluirla. Por lo tanto, a medida que se procesan las estaciones, la cantidad de combinaciones posibles se duplica.
+
+En el peor caso, el algoritmo debe explorar todos los subconjuntos posibles para determinar cuales cumplen con la condicion de que la suma de bicicletas faltantes sea exactamente igual a la capacidad del camion. La cantidad total de subconjuntos de un conjunto de n elementos es \(2^n\), por lo que esa es la complejidad temporal del algoritmo.
+
+Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma actual supera la capacidad del camion, se descarta esa rama de busqueda porque ya no puede generar una solución valida. También se deja de explorar cuando se alcanza el final de la lista de estaciones. Estas condiciones permiten reducir la cantidad de combinaciones evaluadas en determinados casos, aunque no modifican la complejidad del peor caso, que continua siendo O(2ⁿ).
+
 ## Condiciones de entrega
 
 - Exposición de avances cada dos semanas, con el código funcionando.

@@ -536,7 +536,20 @@ class SistemaBicis {
             bicicleta->mostrarInformacion();
         }
 
-        void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) { }
+        void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) {
+                Redistribuidor redistribuidor(
+                    codigos, faltantes,
+                    cantidad, capacidadCamion
+                );
+
+            int soluciones = redistribuidor.buscarSoluciones();
+            
+            if (soluciones == 0) {
+                std::cout << "No se encontraron soluciones." << std::endl;
+            } else {
+                std::cout << "Cantidad de soluciones: " << soluciones << std::endl;
+            }
+        }
 
         ~SistemaBicis() {
             NodoLista<Viaje*>* actualViaje = viajes.obtenerPrimero();
