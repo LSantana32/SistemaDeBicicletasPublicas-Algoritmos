@@ -347,6 +347,24 @@ class SistemaBicis {
             return nullptr;
         }
 
+        bool eliminarBicicleta(int id) {
+            Bicicleta* bicicleta = buscarBicicletaPorId(id); 
+
+            if (bicicleta == nullptr) { 
+                std::cout << "No existe una bicicleta con ID " << id
+                        << ".\n"; 
+                return false; 
+            }
+
+            if (bicicleta->getCodigoEstacion() == "") { 
+                std::cout << "La bicicleta " << id
+                        << " esta en un viaje en curso: no se puede eliminar.\n"; 
+                return false; 
+            }
+
+            return bicicletas.eliminar(id);
+        }
+
         void listarBicicletasOrdenadasPorId() {
             int cantidad = bicicletas.obtenerCantidad();
 

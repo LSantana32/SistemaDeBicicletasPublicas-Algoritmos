@@ -80,6 +80,7 @@ class Menu {
             std::cout << "19. Enviar bicicleta al taller\n";
             std::cout << "20. Reparar la siguiente bicicleta del taller\n";
             std::cout << "21. Planificar redistribucion con el camion\n";
+            std::cout << "22. Eliminar bicicleta del arbol\n";
             std::cout << " 0. Salir\n";
         }
 
@@ -244,6 +245,14 @@ class Menu {
 
                     delete[] codigos;
                     delete[] faltantes;
+                    break;
+                }
+
+                case 22: {
+                    int id = leerEntero("ID de la bicicleta a eliminar: ");
+                    if (sistema->eliminarBicicleta(id)) {
+                        std::cout << "Bicicleta " << id << " eliminada.\n";
+                    }
                     break;
                 }
 

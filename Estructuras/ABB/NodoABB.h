@@ -24,6 +24,10 @@ class NodoABB {
 
         NodoABB<K, V>* getDerecho() { return derecho; }
 
+        void setClave(K nuevaClave) { clave = nuevaClave; }
+
+        void setDato(V nuevoDato) { dato = nuevoDato; }
+
         void setIzquierdo(NodoABB<K, V>* nodo) { izquierdo = nodo;}
 
         void setDerecho(NodoABB<K, V>* nodo) { derecho = nodo;}
