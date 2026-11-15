@@ -116,6 +116,7 @@ classDiagram
         -int capacidadCamion
         -bool* elegidas
         -int cantidadSoluciones
+        +Redistribuidor(string* codigos, int* faltantes, int cantidadEstaciones, int capacidadCamion) void
         +buscarSoluciones() int
         -probar(int posicion, int sumaActual) void
         -mostrarSolucion() void

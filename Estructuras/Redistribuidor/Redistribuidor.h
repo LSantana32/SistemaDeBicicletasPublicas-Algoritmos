@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 class Redistribuidor {
@@ -80,21 +81,4 @@ class Redistribuidor {
             }
             
             ~Redistribuidor() { delete[] elegidas; }
-        };
-
-        inline void planificarRedistribucion(int capacidadCamion, std::string* codigos,
-             int* faltantes, int cantidad) 
-        {
-            Redistribuidor redistribuidor(
-                codigos, faltantes,
-                cantidad, capacidadCamion);
-
-            int soluciones = redistribuidor.buscarSoluciones();
-
-            if (soluciones == 0) {
-                std::cout << "No se encontraron soluciones." << std::endl;
-            } else {
-                std::cout << "Cantidad de soluciones: "
-                  << soluciones << std::endl;
-            }    
         };

@@ -289,11 +289,10 @@ class Menu {
                     break;
 
                 case 21: {
-                    int capacidad = leerEntero("Capacidad del camion: ");
-                    int cantidad = leerEntero("Cantidad de estaciones: ");
+                    int capacidad = leerEnteroPositivo("Capacidad del camion: ");
+                    int cantidad = leerEnteroPositivo("Cantidad de estaciones: ");
 
-                    if (cantidad <= 0) {
-                        std::cout << "Cantidad de estaciones invalida.\n";
+                    if (capacidad <= 0 || cantidad <= 0) {
                         break;
                     }
 
@@ -303,7 +302,7 @@ class Menu {
                     for (int i = 0; i < cantidad; i++) {
                         std::cout << "Estacion " << (i + 1) << ":\n";
                         codigos[i] = leerLinea("  Codigo: ");
-                        faltantes[i] = leerEntero("  Bicicletas faltantes: ");
+                        faltantes[i] = leerEnteroPositivo("  Bicicletas faltantes: ");
                     }
 
                     sistema->planificarRedistribucion(

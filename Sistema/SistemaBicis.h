@@ -661,10 +661,27 @@ class SistemaBicis {
         }
 
         void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) {
-                Redistribuidor redistribuidor(
-                    codigos, faltantes,
-                    cantidad, capacidadCamion
-                );
+            if (capacidadCamion <= 0) {
+                std::cout << "La capacidad del camion debe ser mayor que 0.\n";
+                return;
+            }
+
+            if (cantidad <= 0 || codigos == nullptr || faltantes == nullptr) {
+                std::cout << "No hay estaciones para redistribuir.\n";
+                return;
+            }
+
+            for (int i = 0; i < cantidad; i++) {
+                if (faltantes[i] <= 0) {
+                    std::cout << "Las bicicletas faltantes deben ser mayores que 0.\n";
+                    return;
+                }
+            }
+
+            Redistribuidor redistribuidor(
+                codigos, faltantes,
+                cantidad, capacidadCamion
+            );
 
             int soluciones = redistribuidor.buscarSoluciones();
             

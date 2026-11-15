@@ -239,7 +239,7 @@ Esto se debe a que el algoritmo utiliza la tecnica de backtracking para evaluar 
 
 En el peor caso, el algoritmo debe explorar todos los subconjuntos posibles para determinar cuales cumplen con la condicion de que la suma de bicicletas faltantes sea exactamente igual a la capacidad del camion. La cantidad total de subconjuntos de un conjunto de n elementos es \(2^n\), por lo que esa es la complejidad temporal del algoritmo.
 
-Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma actual supera la capacidad del camion, se descarta esa rama de busqueda porque ya no puede generar una solución valida. También se deja de explorar cuando se alcanza el final de la lista de estaciones. Estas condiciones permiten reducir la cantidad de combinaciones evaluadas en determinados casos, aunque no modifican la complejidad del peor caso, que continua siendo O(2ⁿ).
+Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma actual supera la capacidad del camion, se descarta esa rama de busqueda porque ya no puede generar una solución valida. También se deja de explorar cuando se alcanza el final de la lista de estaciones. Estas condiciones permiten reducir la cantidad de combinaciones evaluadas en determinados casos, aunque no modifican la complejidad del peor caso, que continua siendo \(O(2^n)\).
 
 ## Descripción de los módulos
 
@@ -289,4 +289,4 @@ g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
 ./pruebaEstaciones
 ```
 
-Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap`, `PruebaItemB` y `PruebaItemC`, que cubren las colas de espera, el taller, el ABB y los ítems B.1-B.3 y C.
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap`, `PruebaItemB`, `PruebaItemC` y `PruebaItemD`, que cubren las colas de espera, el taller, el ABB, el backtracking y los ítems B.1-B.3, C y D.
