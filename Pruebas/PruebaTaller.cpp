@@ -32,6 +32,9 @@ int main() {
     sistema.enviarBicicletaAlTaller(2, 2);
     sistema.enviarBicicletaAlTaller(1, 3);
     sistema.enviarBicicletaAlTaller(3, 1);   // no esta averiada: no debe entrar
+    sistema.enviarBicicletaAlTaller(2, 2);   // duplicada: no debe entrar dos veces
+    verificar(sistema.obtenerCantidadEnTaller() == 3,
+              "la bicicleta duplicada no se inserta dos veces");
 
     Bicicleta* electrica = sistema.buscarBicicletaPorId(1);
     Bicicleta* mecanicaMedia = sistema.buscarBicicletaPorId(2);
@@ -52,9 +55,24 @@ int main() {
     sistema.repararSiguienteBicicleta();
     verificar(mecanicaBaja != nullptr && !mecanicaBaja->estaAveriada(),
               "por ultimo se repara la mecanica de prioridad 3");
+    verificar(sistema.obtenerCantidadEnTaller() == 0,
+              "el taller queda vacio tras reparar todas las bicicletas");
 
     verificar(sana != nullptr && !sana->estaAveriada(),
               "la bicicleta no averiada nunca cambio de estado");
+
+    sistema.agregarBicicleta(5, "TST", "Mecanica", "Averiada", 5000);
+    sistema.enviarBicicletaAlTaller(5, 2);
+    sistema.enviarBicicletaAlTaller(5, 2);
+    verificar(sistema.obtenerCantidadEnTaller() == 1,
+              "la bici 5 queda una sola vez en el taller");
+
+    verificar(sistema.eliminarBicicleta(5),
+              "se puede eliminar del arbol una bici que esta en el taller");
+    verificar(sistema.obtenerCantidadEnTaller() == 0,
+              "al eliminar la bici del arbol tambien sale del taller");
+    verificar(sistema.buscarBicicletaPorId(5) == nullptr,
+              "la bici eliminada ya no existe en el ABB");
 
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;

@@ -60,6 +60,24 @@ int main() {
     numeros.insertar(7, 2);
     numeros.insertar(8, 1);
 
+    HeapMin<int> conEliminacion;
+    conEliminacion.insertar(10, 3);
+    conEliminacion.insertar(20, 1);
+    conEliminacion.insertar(30, 2);
+    verificar(conEliminacion.eliminar(20), "eliminar quita el minimo del heap");
+    verificar(conEliminacion.obtenerCantidad() == 2, "eliminar descuenta la cantidad");
+    verificar(conEliminacion.verMinimo() == 30, "tras eliminar el minimo queda el siguiente");
+    verificar(!conEliminacion.eliminar(99), "eliminar un dato inexistente devuelve false");
+
+    conEliminacion.insertar(40, 1);
+    verificar(conEliminacion.eliminar(30), "eliminar un elemento interno reordena el heap");
+    verificar(conEliminacion.verMinimo() == 40, "el heap conserva el orden tras eliminar");
+
+    HeapMin<int> unSoloElemento;
+    unSoloElemento.insertar(1, 1);
+    verificar(unSoloElemento.eliminar(1) && unSoloElemento.estaVacio(),
+              "eliminar el unico elemento deja el heap vacio");
+
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;
 }

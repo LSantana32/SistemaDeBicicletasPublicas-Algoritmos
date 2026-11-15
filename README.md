@@ -123,11 +123,11 @@ Los códigos de estación se validan con exactamente 3 caracteres, tanto desde e
 
 ### B. Viajes y colas de espera
 
-- Calcular la cantidad de viajes que salieron de una estación dentro de un rango de fechas.
+- Calcular la cantidad de viajes que salieron de una estación dentro de un rango de fechas. Se valida que la estación de origen exista.
 - Buscar todos los viajes de un usuario por su DNI y calcular el total de minutos pedaleados.
-- Listar las bicicletas que superen una cantidad de kilómetros indicada por el usuario.
-- Implementar una cola de espera por estación para asignar bicicletas a los usuarios en orden de llegada.
-- Implementar una cola de prioridad mediante un min-heap para gestionar las bicicletas averiadas que ingresan al taller.
+- Listar las bicicletas que superen una cantidad de kilómetros indicada por el usuario. Al devolver una bicicleta se suman los kilómetros recorridos informados por el usuario.
+- Implementar una cola de espera por estación para asignar bicicletas a los usuarios en orden de llegada. Un mismo DNI no puede encolarse dos veces.
+- Implementar una cola de prioridad mediante un min-heap para gestionar las bicicletas averiadas que ingresan al taller. No se admite ingresar dos veces la misma bicicleta; si se elimina una bicicleta del ABB, también se la quita del taller.
 
 **Análisis de complejidad temporal y estructuras de datos**
 
@@ -147,13 +147,13 @@ Se reutiliza la lista enlazada de viajes: se recorre cada registro comparando el
 
 **Complejidad temporal:** \(O(b)\)
 
-Las bicicletas se almacenan en un árbol binario de búsqueda. Para listarlas se obtiene el recorrido *inorder* en un arreglo, que visita cada nodo una vez, y luego se filtra por kilómetros con un recorrido lineal adicional. Ambas pasadas son \(O(b)\), donde \(b\) es la cantidad total de bicicletas, por lo que el costo total es \(O(b)\).
+Las bicicletas se almacenan en un árbol binario de búsqueda. Para listarlas se obtiene el recorrido *inorder* en un arreglo, que visita cada nodo una vez, y luego se filtra por kilómetros con un recorrido lineal adicional. Ambas pasadas son \(O(b)\), donde \(b\) es la cantidad total de bicicletas, por lo que el costo total es \(O(b)\). La actualización de kilómetros al devolver una bicicleta es \(O(1)\).
 
 **4. Cola de espera por estación (retiro y devolución)**
 
-**Complejidad temporal:** retirar y devolver \(O(b + n)\) en el peor caso; encolar y desencolar \(O(1)\).
+**Complejidad temporal:** retirar \(O(b + n + k)\) y devolver \(O(b + n)\) en el peor caso; desencolar \(O(1)\); encolar \(O(k)\), donde \(k\) es la cantidad de usuarios en espera, porque se verifica que el DNI no esté repetido.
 
-Cada estación tiene su propia cola enlazada FIFO, por lo que encolar y desencolar son \(O(1)\). El retiro y la devolución combinan la búsqueda de la estación en la tabla hash (\(O(1)\) promedio), el recorrido de la lista de viajes para detectar un viaje en curso \(O(n)\), la búsqueda de la bicicleta en el ABB (\(O(b)\) en el peor caso) y la inserción al final de la lista de viajes \(O(n)\). Por eso el costo total es \(O(b + n)\), con \(b\) bicicletas y \(n\) viajes.
+Cada estación tiene su propia cola enlazada FIFO. Desencolar es \(O(1)\); encolar recorre la cola para evitar DNI duplicados, por lo que es \(O(k)\). El retiro y la devolución combinan la búsqueda de la estación en la tabla hash (\(O(1)\) promedio), el recorrido de la lista de viajes para detectar un viaje en curso \(O(n)\), la búsqueda de la bicicleta en el ABB (\(O(b)\) en el peor caso) y la inserción al final de la lista de viajes \(O(n)\). Por eso el costo total es \(O(b + n)\) para la devolución y \(O(b + n + k)\) para el retiro, con \(b\) bicicletas, \(n\) viajes y \(k\) usuarios en espera.
 
 **5. Taller de reparaciones (min-heap)**
 
@@ -289,4 +289,4 @@ g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
 ./pruebaEstaciones
 ```
 
-Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan.
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap` y `PruebaItemB`, que cubren las colas de espera, el taller y los ítems B.1-B.3.

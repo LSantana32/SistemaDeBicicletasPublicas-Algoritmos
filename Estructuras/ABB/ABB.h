@@ -164,6 +164,7 @@ class ABB {
             }
 
             // Caso 3: nodo con dos hijos. Se reemplaza por su sucesor inorder
+            delete nodo->getDato();
             NodoABB<K, V>* sucesor = obtenerMinimo(nodo->getDerecho());
             nodo->setClave(sucesor->getClave());
             nodo->setDato(sucesor->getDato());

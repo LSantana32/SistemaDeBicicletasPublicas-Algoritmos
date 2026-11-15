@@ -63,6 +63,21 @@ class Menu {
             return valor;
         }
 
+        int leerEnteroNoNegativo(std::string mensaje) {
+            int valor = leerEntero(mensaje);
+
+            while (valor < 0) {
+                if (std::cin.eof()) {
+                    return valor;
+                }
+
+                std::cout << "Valor invalido. No puede ser negativo.\n";
+                valor = leerEntero(mensaje);
+            }
+
+            return valor;
+        }
+
         int leerEnteroEnRango(std::string mensaje, int minimo, int maximo) {
             int valor = leerEntero(mensaje);
 
@@ -188,9 +203,12 @@ class Menu {
                     std::string codigo = leerCodigo("Codigo de la estacion de origen: ");
                     int desde = leerEntero("Fecha desde (AAAAMMDD): ");
                     int hasta = leerEntero("Fecha hasta (AAAAMMDD): ");
-                    int cantidad = sistema->contarViajesDesdeEstacionEnRango(
-                        codigo, desde, hasta);
-                    std::cout << "Cantidad de viajes: " << cantidad << '\n';
+                    int cantidad = 0;
+
+                    if (sistema->contarViajesDesdeEstacionEnRango(
+                            codigo, desde, hasta, cantidad)) {
+                        std::cout << "Cantidad de viajes: " << cantidad << '\n';
+                    }
                     break;
                 }
 
@@ -253,8 +271,9 @@ class Menu {
                 case 18: {
                     std::string codigo = leerCodigo("Codigo de la estacion: ");
                     int dni = leerEntero("DNI del usuario: ");
-                    int duracion = leerEntero("Duracion del viaje (minutos): ");
-                    sistema->devolverBicicleta(codigo, dni, duracion);
+                    int duracion = leerEnteroNoNegativo("Duracion del viaje (minutos): ");
+                    int kilometros = leerEnteroNoNegativo("Kilometros recorridos: ");
+                    sistema->devolverBicicleta(codigo, dni, duracion, kilometros);
                     break;
                 }
 

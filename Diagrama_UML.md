@@ -30,7 +30,7 @@ classDiagram
         +listarEstacionesConBajaOcupacion() void
         +mostrarRecorridoMasCorto(string origen, string destino) void
         +mostrarEstadisticasDelHash() void
-        +contarViajesDesdeEstacionEnRango(string codigo, int fechaDesde, int fechaHasta) int
+        +contarViajesDesdeEstacionEnRango(string codigo, int fechaDesde, int fechaHasta, int& cantidad) bool
         +mostrarViajesYMinutosDeUsuario(int dni) void
         +agregarBicicleta(int id, string codigoEstacion, string tipo, string estado, int kilometros) void
         +buscarBicicletaPorId(int id) Bicicleta*
@@ -39,9 +39,10 @@ classDiagram
         +listarBicicletasConMasKm(int kmMinimo) void
         +mostrarAlturaDelArbol() void
         +retirarBicicleta(string codigoEstacion, int dni, int fechaActual) void
-        +devolverBicicleta(string codigoEstacion, int dni, int duracionMin) void
+        +devolverBicicleta(string codigoEstacion, int dni, int duracionMin, int kilometrosRecorridos) void
         +enviarBicicletaAlTaller(int idBicicleta, int prioridad) void
         +repararSiguienteBicicleta() void
+        +obtenerCantidadEnTaller() int
         +planificarRedistribucion(int capacidadCamion, string* codigos, int* faltantes, int cantidad) void
         +~SistemaBicis() void
     }
@@ -58,6 +59,9 @@ classDiagram
         +calcularPorcentajeOcupacion() double
         +getBicisDisponibles() int
         +hayBicicletasDisponibles() bool
+        +usuarioEnEspera(int dni) bool
+        +agregarAEspera(int dni) bool
+        +obtenerCantidadEnEspera() int
         +retirarBicicleta(int dni) bool
         +devolverBicicleta() int
         +mostrarInformacion() void
@@ -69,14 +73,18 @@ classDiagram
         -string tipo
         -string estado
         -int kilometros
+        -bool enTaller
         +getId() int
         +getCodigoEstacion() string
         +getEstado() string
         +setEstado(string nuevoEstado) void
         +setCodigoEstacion(string codigo) void
         +getKilometros() int
+        +sumarKilometros(int distancia) void
         +estaAveriada() bool
         +esElectrica() bool
+        +estaEnTaller() bool
+        +setEnTaller(bool valor) void
         +iniciarViaje() void
         +mostrarInformacion() void
     }
@@ -121,6 +129,7 @@ classDiagram
         +encolar(T dato) void
         +desencolar() T
         +verPrimero() T
+        +contiene(T dato) bool
         +estaVacia() bool
         +obtenerLargo() int
         +~Cola() void
@@ -180,6 +189,7 @@ classDiagram
         -int cantidad
         -int capacidad
         +insertar(T dato, int prioridad) void
+        +eliminar(T dato) bool
         +extraerMinimo() T
         +verMinimo() T
         +estaVacio() bool

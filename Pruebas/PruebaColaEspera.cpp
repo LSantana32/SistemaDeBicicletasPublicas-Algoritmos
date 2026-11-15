@@ -38,6 +38,14 @@ int main() {
     verificar(llena.devolverBicicleta() == -2, "devolver en estacion llena devuelve -2");
     verificar(llena.getBicisDisponibles() == 1, "la estacion llena no cambia su cantidad");
 
+    Estacion duplicada("DDD", "Duplicada", "Centro", 5, 0);
+    verificar(!duplicada.retirarBicicleta(100), "sin bicis, el primer DNI se encola");
+    verificar(!duplicada.retirarBicicleta(100), "el mismo DNI no se vuelve a encolar");
+    verificar(duplicada.obtenerCantidadEnEspera() == 1,
+              "la cola tiene un solo registro para el DNI repetido");
+    verificar(duplicada.devolverBicicleta() == 100, "el DNI duplicado se asigna una sola vez");
+    verificar(duplicada.devolverBicicleta() == -1, "no queda un segundo registro del mismo DNI");
+
     std::cout << "\n=== Integracion: SistemaBicis ===\n";
 
     SistemaBicis sistema;
@@ -52,16 +60,28 @@ int main() {
     verificar(bici != nullptr && bici->getCodigoEstacion() == "", "la bici retirada queda en uso");
 
     sistema.retirarBicicleta("TST", 222, 20260101);
+    sistema.retirarBicicleta("TST", 222, 20260101);   // reintento: no debe duplicar
+
+    // Unos kilometros negativos no deben modificar la bicicleta ni cerrar el viaje.
+    sistema.devolverBicicleta("TST", 111, 10, -5);
+    verificar(bici != nullptr && bici->getKilometros() == 100,
+              "los kilometros negativos no se suman");
+    verificar(bici != nullptr && bici->getCodigoEstacion() == "",
+              "una devolucion invalida deja el viaje en curso");
 
     // 111 devuelve la bici: debe asignarse al usuario 222 que estaba esperando.
-    sistema.devolverBicicleta("TST", 111, 10);
+    sistema.devolverBicicleta("TST", 111, 10, 3);
     verificar(bici != nullptr && bici->getCodigoEstacion() == "",
               "la bici devuelta se asigna al usuario en espera y sigue en uso");
+    verificar(bici != nullptr && bici->getKilometros() == 103,
+              "devolver suma los kilometros recorridos");
 
     // 222 devuelve la bici: ahora si queda disponible en la estacion.
-    sistema.devolverBicicleta("TST", 222, 10);
+    sistema.devolverBicicleta("TST", 222, 10, 4);
     verificar(bici != nullptr && bici->getCodigoEstacion() == "TST",
               "sin usuarios en espera, la bici queda en la estacion");
+    verificar(bici != nullptr && bici->getKilometros() == 107,
+              "los kilometros de las devoluciones se acumulan");
 
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;

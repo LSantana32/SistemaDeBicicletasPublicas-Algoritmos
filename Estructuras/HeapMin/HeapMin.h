@@ -82,6 +82,30 @@ class HeapMin {
             subirElemento(cantidad - 1);
         }
 
+        bool eliminar(T dato) {
+            for (int i = 0; i < cantidad; i++) {
+                if (elementos[i].getDato() == dato) {
+                    cantidad--;
+
+                    if (i < cantidad) {
+                        elementos[i] = elementos[cantidad];
+                        int padre = (i - 1) / 2;
+
+                        if (i > 0 && elementos[i].getPrioridad()
+                                        < elementos[padre].getPrioridad()) {
+                            subirElemento(i);
+                        } else {
+                            bajarElemento(i);
+                        }
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         T extraerMinimo() {
             if (estaVacio()) {
                 return T();

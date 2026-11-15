@@ -290,28 +290,36 @@ class SistemaBicis {
             T(n) = 1 + 1 + 2 + 2 + n + 1 + n * (7 + 2) + 2 + 2 + 1 = 12 + n + 9n = 12 + 10n = O(n)
         */
 
-        int contarViajesDesdeEstacionEnRango(std::string codigo, int fechaDesde, int fechaHasta) {
-            if (fechaDesde > fechaHasta) { // 1
-                return 0; // 1
+        bool contarViajesDesdeEstacionEnRango(std::string codigo, int fechaDesde,
+                                            int fechaHasta, int& cantidad) {
+            cantidad = 0;
+            Estacion* estacion = nullptr;
+
+            if (!estaciones.buscar(codigo, estacion)) {
+                std::cout << "La estacion " << codigo << " no existe." << std::endl;
+                return false;
             }
 
-            NodoLista<Viaje*>* actual = viajes.obtenerPrimero(); // 2
-            int cantidad = 0; // 2
+            if (fechaDesde > fechaHasta) {
+                return true;
+            }
 
-            while (actual != nullptr) { // n + 1
-                Viaje* viaje = actual->getDato(); // 2
+            NodoLista<Viaje*>* actual = viajes.obtenerPrimero();
+
+            while (actual != nullptr) {
+                Viaje* viaje = actual->getDato();
 
                 if (viaje != nullptr &&
                 viaje->getEstacionOrigen() == codigo &&
                 viaje->getFecha() >= fechaDesde &&
-                viaje->getFecha() <= fechaHasta) { // 7
-                    cantidad++; // 2
+                viaje->getFecha() <= fechaHasta) {
+                    cantidad++;
                 }
 
-            actual = actual->getSiguiente(); // 2
+                actual = actual->getSiguiente();
             }
 
-            return cantidad; // 1
+            return true;
         }
 
         /*
@@ -370,6 +378,10 @@ class SistemaBicis {
                 std::cout << "La bicicleta " << id
                         << " esta en un viaje en curso: no se puede eliminar.\n"; 
                 return false; 
+            }
+
+            if (bicicleta->estaEnTaller()) {
+                taller.eliminar(bicicleta);
             }
 
             return bicicletas.eliminar(id);
@@ -487,9 +499,14 @@ class SistemaBicis {
             }   
 
             if (!estacion->hayBicicletasDisponibles()) { // 1
-                estacion->retirarBicicleta(dni); // 1
-                std::cout << "No hay bicicletas disponibles en la estacion " << codigoEstacion 
-                            << ". Se ha agregado a la cola de espera del usuario con DNI " << dni << "." << std::endl; // 1
+                if (estacion->agregarAEspera(dni)) {
+                    std::cout << "No hay bicicletas disponibles en la estacion " << codigoEstacion
+                                << ". Se ha agregado a la cola de espera del usuario con DNI " << dni << "." << std::endl; // 1
+                } else {
+                    std::cout << "El usuario con DNI " << dni
+                                << " ya esta en la cola de espera de la estacion "
+                                << codigoEstacion << "." << std::endl;
+                }
                 return; // 1
             }
 
@@ -522,10 +539,16 @@ class SistemaBicis {
             Compejidad Algoritmica
             n = cantidad de viajes en el sistema
             b = cantidad de bicicletas en el sistema
-            T(n) = 2 + 1 + 1 + 1 + n + 2 + 1 + 1 + b + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + n + 1 + 1 + n + 1 = 
-                    22 + b + 3n = O(b + n)
+            T(n) = 1 + 1 + 1 + 2 + 1 + 1 + 1 + n + 2 + 1 + 1 + b + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + n + 1 + 1 + n + 1 = 
+                    26 + b + 3n = O(b + n)
         */
-        void devolverBicicleta( std::string codigoEstacion, int dni, int duracionMin) {
+        void devolverBicicleta(std::string codigoEstacion, int dni, int duracionMin,
+                                int kilometrosRecorridos) {
+            if (duracionMin < 0 || kilometrosRecorridos < 0) { // 1
+                std::cout << "La duracion y los kilometros recorridos no pueden ser negativos.\n"; // 1
+                return; // 1
+            }
+
             Estacion* estacion = nullptr; // 2
             if (!estaciones.buscar(codigoEstacion, estacion)) { // 1
                 std::cout << "Estacion con codigo " << codigoEstacion << " no encontrada." << std::endl; // 1
@@ -554,6 +577,7 @@ class SistemaBicis {
                 return; // 1
             }
 
+            bicicleta->sumarKilometros(kilometrosRecorridos); // 1
             bicicleta->setCodigoEstacion(codigoEstacion); // 1
             viaje->setEstacionDestino(codigoEstacion); // 1
             viaje->setDuracionMin(duracionMin); // 1
@@ -582,7 +606,7 @@ class SistemaBicis {
             Compejidad Algoritmica
             n = cantidad de viajes en el sistema
             b = cantidad de bicicletas en el sistema
-            T(n) = b + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + log n + 1 = 14 + b + log n = O(b + log n)
+            T(n) = b + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + log n + 1 + 1 = 18 + b + log n = O(b + log n)
         */
         void enviarBicicletaAlTaller(int idBicicleta, int prioridad) { 
             Bicicleta* bicicleta = buscarBicicletaPorId(idBicicleta); // b
@@ -599,11 +623,17 @@ class SistemaBicis {
                 std::cout << "La prioridad tiene que ser 1, 2 o 3." << std::endl; // 1
                 return; // 1
             }
+            if (bicicleta->estaEnTaller()) { // 1
+                std::cout << "La bicicleta " << idBicicleta 
+                            << " ya esta en el taller." << std::endl; // 1
+                return; // 1
+            }
             if (bicicleta->esElectrica()) { // 1
                 prioridad = 1; // 2
             }
 
             taller.insertar(bicicleta, prioridad); // log n
+            bicicleta->setEnTaller(true); // 1
             std::cout << "Bicicleta " << idBicicleta << " enviada al taller con prioridad "
                         << prioridad << "." << std::endl; // 1
         }
@@ -611,7 +641,7 @@ class SistemaBicis {
         /*
             Compejidad Algoritmica
             n = cantidad de bicicletas en el taller
-            T(n) = 2 + 1 + 1 + n + 1 + 1 + 1 = 7 + log n = O(log n)
+            T(n) = 2 + 1 + 1 + n + 1 + 1 + 1 + 1 = 8 + log n = O(log n)
         */
         void repararSiguienteBicicleta() { 
             if (taller.estaVacio()) { // 2
@@ -621,8 +651,13 @@ class SistemaBicis {
 
             Bicicleta* bicicleta = taller.extraerMinimo(); // log n 
             bicicleta->setEstado("OK"); // 1
+            bicicleta->setEnTaller(false); // 1
             std::cout << "Se reparo la bicicleta " << bicicleta->getId() << ":" << std::endl; // 1
             bicicleta->mostrarInformacion(); // 1
+        }
+
+        int obtenerCantidadEnTaller() {
+            return taller.obtenerCantidad();
         }
 
         void planificarRedistribucion(int capacidadCamion, std::string* codigos, int* faltantes, int cantidad) {

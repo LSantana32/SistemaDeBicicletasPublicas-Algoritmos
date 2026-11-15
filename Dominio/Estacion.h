@@ -52,12 +52,29 @@ public:
         return bicisDisponibles > 0;
     }
 
+    bool usuarioEnEspera(int dni) {
+        return colaEspera.contiene(dni);
+    }
+
+    bool agregarAEspera(int dni) {
+        if (usuarioEnEspera(dni)) {
+            return false;
+        }
+
+        colaEspera.encolar(dni);
+        return true;
+    }
+
+    int obtenerCantidadEnEspera() {
+        return colaEspera.obtenerLargo();
+    }
+
     bool retirarBicicleta(int dni) { 
         if (bicisDisponibles > 0) {
             bicisDisponibles--;
             return true;
         } else {
-            colaEspera.encolar(dni);
+            agregarAEspera(dni);
             return false;
         }
     }
