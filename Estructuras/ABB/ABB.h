@@ -103,6 +103,75 @@ class ABB {
             return obtenerBicicletaDisponibleEnEstacionRecursivo(nodo->getDerecho(), clave);
         }
 
+        NodoABB<K, V>* obtenerMinimo(NodoABB<K, V>* nodo) {
+            while (nodo->getIzquierdo() != nullptr) {
+                nodo = nodo->getIzquierdo();
+            }
+
+            return nodo;
+        }
+
+        // Elimina el nodo minimo del subarbol y devuelve su nueva raiz.
+        NodoABB<K, V>* eliminarMinimo(NodoABB<K, V>* nodo) {
+            if (nodo->getIzquierdo() == nullptr) {
+                NodoABB<K, V>* derecho = nodo->getDerecho();
+                delete nodo;
+                return derecho;
+            }
+
+            nodo->setIzquierdo(eliminarMinimo(nodo->getIzquierdo()));
+            return nodo;
+        }
+
+        NodoABB<K, V>* eliminarRecursivo(
+            NodoABB<K, V>* nodo, K clave, bool& eliminado) {
+
+            if (nodo == nullptr) {
+                return nullptr;
+            }
+
+            if (clave < nodo->getClave()) {
+                nodo->setIzquierdo(
+                    eliminarRecursivo(nodo->getIzquierdo(), clave, eliminado));
+                return nodo;
+            }
+
+            if (clave > nodo->getClave()) {
+                nodo->setDerecho(
+                    eliminarRecursivo(nodo->getDerecho(), clave, eliminado));
+                return nodo;
+            }
+
+            eliminado = true;
+
+            // Caso 1: nodo hoja
+            if (nodo->getIzquierdo() == nullptr
+                && nodo->getDerecho() == nullptr) {
+                delete nodo->getDato();
+                delete nodo;
+                return nullptr;
+            }
+
+            // Caso 2: nodo con un solo hijo
+            if (nodo->getIzquierdo() == nullptr
+                || nodo->getDerecho() == nullptr) {
+                NodoABB<K, V>* hijo = nodo->getIzquierdo() != nullptr
+                    ? nodo->getIzquierdo() : nodo->getDerecho();
+
+                delete nodo->getDato();
+                delete nodo;
+                return hijo;
+            }
+
+            // Caso 3: nodo con dos hijos. Se reemplaza por su sucesor inorder
+            NodoABB<K, V>* sucesor = obtenerMinimo(nodo->getDerecho());
+            nodo->setClave(sucesor->getClave());
+            nodo->setDato(sucesor->getDato());
+            nodo->setDerecho(eliminarMinimo(nodo->getDerecho()));
+
+            return nodo;
+        }
+
     public:
         ABB(NodoABB<K,V>* raiz, int cantidad) {
             this->raiz = raiz;
@@ -131,7 +200,16 @@ class ABB {
             return true;
         }
 
-        bool eliminar(K clave) { return false; }
+        bool eliminar(K clave) {
+            bool eliminado = false;
+            raiz = eliminarRecursivo(raiz, clave, eliminado);
+
+            if (eliminado) {
+                cantidad--;
+            }
+
+            return eliminado;
+        }
 
         void obtenerEnInorder(V* destino) {
             if(destino == nullptr){

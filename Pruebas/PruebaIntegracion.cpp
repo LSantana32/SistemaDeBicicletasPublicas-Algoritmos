@@ -58,7 +58,7 @@ int main() {
 
     Estacion prueba("TST", "Estacion de prueba", "Centro", 20, 5);
 
-    std::cout << "Porcentaje esperado: 75%\n";
+    std::cout << "Porcentaje esperado: 25%\n";
     std::cout << "Porcentaje obtenido: "
             << prueba.calcularPorcentajeOcupacion() << "%\n";
 
