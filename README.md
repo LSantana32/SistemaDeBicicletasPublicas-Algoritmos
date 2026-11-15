@@ -189,7 +189,7 @@ Explicar qué altura tendría el árbol si las bicicletas se cargaran ordenadas 
 
 Si las bicicletas se cargan ordenadas por ID, cada una es mayor que todas las anteriores, así que siempre se inserta como hijo derecho del último nodo. Por lo tanto, si todos los nodos forman una sola rama hacia la derecha, como una lista enlazada, su altura es igual a la cantidad de bicicletas. El peor caso en la búsqueda va a ser de O(n).
 
-En un árbol balanceado la altura crece como O(log<sub>2<sub> n) y la búsqueda es O(log n): con 1.000 bicicletas serían unas 10 comparaciones en vez de 1.000.
+En un árbol balanceado la altura crece como O(log<sub>2</sub> n) y la búsqueda es O(log n): con 1.000 bicicletas serían unas 10 comparaciones en vez de 1.000.
 
 **Funcionalidad opcional:**
 
