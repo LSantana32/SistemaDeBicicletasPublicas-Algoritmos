@@ -242,6 +242,16 @@ class SistemaBicis {
         }
 
         void mostrarRecorridoMasCorto(std::string origen, std::string destino) {
+            if (!ciclovias.existeVertice(origen)) {
+                std::cout << "La estacion " << origen << " no existe." << std::endl;
+                return;
+            }
+
+            if (!ciclovias.existeVertice(destino)) {
+                std::cout << "La estacion " << destino << " no existe." << std::endl;
+                return;
+            }
+
             Lista<std::string> camino;
             int largo = 0;
 

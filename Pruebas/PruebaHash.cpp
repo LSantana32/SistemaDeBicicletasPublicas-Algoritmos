@@ -44,6 +44,9 @@ int main() {
     int valor = 0;
     verificar(tabla.buscar("CAB", valor) && valor == 3, "buscar CAB devuelve su valor");
     verificar(!tabla.buscar("ZZZ", valor), "buscar un codigo inexistente devuelve false");
+    verificar(!tabla.buscar("A", valor), "buscar una clave de 1 caracter no rompe");
+    verificar(!tabla.buscar("", valor), "buscar una clave vacia no rompe");
+    verificar(!tabla.eliminar("A"), "eliminar una clave de 1 caracter devuelve false");
     verificar(!tabla.insertar("PLZ", 99), "no se permite insertar una clave duplicada");
     verificar(tabla.obtenerCantidad() == 6, "el duplicado no cambia la cantidad");
 

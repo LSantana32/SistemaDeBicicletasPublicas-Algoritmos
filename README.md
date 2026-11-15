@@ -111,9 +111,15 @@ CAB PAL
 
 El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo, selección o inserción.
 
-**Análisis requerido:**
-- Cantidad de colisiones de la tabla hash con los datos de prueba.
-- Factor de carga final de la tabla hash.
+**Análisis de la tabla hash**
+
+La clave se pliega tomando los tres caracteres del código (dos de ellos como un valor de 16 bits) y aplicando XOR; luego se calcula el módulo de la capacidad de la tabla (101 cubetas). La resolución de colisiones es por encadenamiento: cada cubeta apunta a una lista de nodos.
+
+Con los datos de prueba (`PLZ`, `PAL`, `CAB`, `RET`, `CON` y `BOE`) las cubetas obtenidas son 74, 3, 77, 96, 37 y 31 respectivamente, por lo que **no hubo colisiones (0)**.
+
+El factor de carga final es **6 / 101 = 0,0594 (5,94 %)**.
+
+Los códigos de estación se validan con exactamente 3 caracteres, tanto desde el menú como en `SistemaBicis::agregarEstacion`, que es el formato que asume la función hash.
 
 ### B. Viajes y colas de espera
 
@@ -235,6 +241,15 @@ En el peor caso, el algoritmo debe explorar todos los subconjuntos posibles para
 
 Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma actual supera la capacidad del camion, se descarta esa rama de busqueda porque ya no puede generar una solución valida. También se deja de explorar cuando se alcanza el final de la lista de estaciones. Estas condiciones permiten reducir la cantidad de combinaciones evaluadas en determinados casos, aunque no modifican la complejidad del peor caso, que continua siendo O(2ⁿ).
 
+## Descripción de los módulos
+
+- `Dominio/`: clases del modelo de negocio (`Estacion`, `Bicicleta` y `Viaje`).
+- `Estructuras/`: implementaciones propias de las estructuras de datos (`Lista`, `Cola`, `Grafo`, `ABB`, `HeapMin`, `TablaHash` y `Redistribuidor`).
+- `Sistema/`: `SistemaBicis`, con la lógica central del sistema, y `Menu`, con la interfaz por consola y la validación de las entradas.
+- `Pruebas/`: programas de prueba de cada estructura y de la integración del sistema.
+- `Archivos/`: archivos de datos de entrada (`estaciones.txt`, `bicicletas.txt`, `viajes.txt` y `ciclovias.txt`).
+- `main.cpp`: punto de entrada que carga los datos y abre el menú.
+
 ## Condiciones de entrega
 
 - Exposición de avances cada dos semanas, con el código funcionando.
@@ -247,4 +262,31 @@ Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma 
 
 ## Compilación
 
-El programa debe compilar sin advertencias utilizando `g++` con C++17 y las opciones `
+El programa se compila con `g++` y C++17. Desde la carpeta raíz del proyecto:
+
+```bash
+g++ -std=c++17 -Wall -Wextra main.cpp -o sistema
+./sistema
+```
+
+El ejecutable lee los archivos de la carpeta `Archivos/`, por lo que debe ejecutarse desde la raíz del proyecto.
+
+## Pruebas
+
+Las pruebas se compilan indicando el archivo de la carpeta `Pruebas` y se ejecutan desde la raíz del proyecto:
+
+```bash
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaHash.cpp -o pruebaHash
+./pruebaHash
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaGrafo.cpp -o pruebaGrafo
+./pruebaGrafo
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstacionesA.cpp -o pruebaEstacionesA
+./pruebaEstacionesA
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
+./pruebaEstaciones
+```
+
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan.
