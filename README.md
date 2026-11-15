@@ -289,4 +289,4 @@ g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
 ./pruebaEstaciones
 ```
 
-Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap` y `PruebaItemB`, que cubren las colas de espera, el taller y los ítems B.1-B.3.
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap`, `PruebaItemB` y `PruebaItemC`, que cubren las colas de espera, el taller, el ABB y los ítems B.1-B.3 y C.

@@ -181,6 +181,9 @@ classDiagram
         ABB : -inorderRecursivo(NodoABB* nodo, V* destino, int& indice) void
         ABB : -alturaRecursiva(NodoABB* nodo) int
         ABB : -obtenerBicicletaDisponibleEnEstacionRecursivo(NodoABB* nodo, string clave) V
+        ABB : -obtenerMinimo(NodoABB* nodo) NodoABB*
+        ABB : -eliminarMinimo(NodoABB* nodo) NodoABB*
+        ABB : -eliminarRecursivo(NodoABB* nodo, K clave, bool& eliminado) NodoABB*
         ABB : -liberarPostorder(NodoABB* nodo) void
         ABB : +~ABB() void
 
@@ -259,6 +262,8 @@ classDiagram
         NodoABB : +getDato() V
         NodoABB : +getIzquierdo() NodoABB*
         NodoABB : +getDerecho() NodoABB*
+        NodoABB : +setClave(K nuevaClave) void
+        NodoABB : +setDato(V nuevoDato) void
         NodoABB : +setIzquierdo(NodoABB* nodo) void
         NodoABB : +setDerecho(NodoABB* nodo) void
 
