@@ -13,6 +13,10 @@ classDiagram
         +procesarOpcionElegida(int opcion) void
         -leerEntero(string mensaje) int
         -leerLinea(string mensaje) string
+        -leerCodigo(string mensaje) string
+        -leerEnteroPositivo(string mensaje) int
+        -leerEnteroNoNegativo(string mensaje) int
+        -leerEnteroEnRango(string mensaje, int minimo, int maximo) int
     }
 
     class SistemaBicis {
@@ -33,6 +37,7 @@ classDiagram
         +contarViajesDesdeEstacionEnRango(string codigo, int fechaDesde, int fechaHasta, int& cantidad) bool
         +mostrarViajesYMinutosDeUsuario(int dni) void
         +agregarBicicleta(int id, string codigoEstacion, string tipo, string estado, int kilometros) void
+        +eliminarBicicleta(int id) bool
         +buscarBicicletaPorId(int id) Bicicleta*
         +listarBicicletasOrdenadasPorId() void
         +contarBicicletasAveriadas() int
