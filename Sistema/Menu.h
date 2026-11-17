@@ -176,9 +176,6 @@ class Menu {
                     std::string codigo = leerCodigo("Codigo de la estacion a eliminar: ");
                     if (sistema->eliminarEstacion(codigo)) {
                         std::cout << "Estacion " << codigo << " eliminada.\n";
-                    } else {
-                        std::cout << "No existe una estacion con codigo "
-                                << codigo << ".\n";
                     }
                     break;
                 }

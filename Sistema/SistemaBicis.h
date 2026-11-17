@@ -165,6 +165,8 @@ class SistemaBicis {
         bool eliminarEstacion(std::string codigo) {
             Estacion* estacion = nullptr;
             if (!estaciones.buscar(codigo, estacion)) {
+                std::cout << "No existe una estacion con codigo " << codigo
+                        << ".\n";
                 return false;
             }
 

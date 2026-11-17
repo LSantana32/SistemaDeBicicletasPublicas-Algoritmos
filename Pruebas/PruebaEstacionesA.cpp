@@ -97,6 +97,48 @@ int main() {
                   "la estacion creada por el menu queda con 0 bicis disponibles");
     }
 
+    std::cout << "\n=== Menu: eliminacion de estaciones ===\n";
+    {
+        SistemaBicis sistema;
+        std::istringstream entrada("ZZZ\n");
+        std::ostringstream salidaMenu;
+        std::streambuf* entradaOriginal = std::cin.rdbuf(entrada.rdbuf());
+        std::streambuf* salidaOriginal = std::cout.rdbuf(salidaMenu.rdbuf());
+
+        Menu menu(&sistema);
+        menu.procesarOpcionElegida(3);
+
+        std::cin.rdbuf(entradaOriginal);
+        std::cout.rdbuf(salidaOriginal);
+
+        verificar(contiene(salidaMenu.str(), "No existe una estacion con codigo ZZZ"),
+                  "la opcion 3 informa cuando la estacion no existe");
+    }
+    {
+        SistemaBicis sistema;
+        sistema.agregarEstacion(new Estacion("VIA", "Viaje", "Centro", 5, 1));
+        sistema.agregarBicicleta(10, "VIA", "Mecanica", "OK", 100);
+        sistema.retirarBicicleta("VIA", 123, 20260101);
+
+        std::istringstream entrada("VIA\n");
+        std::ostringstream salidaMenu;
+        std::streambuf* entradaOriginal = std::cin.rdbuf(entrada.rdbuf());
+        std::streambuf* salidaOriginal = std::cout.rdbuf(salidaMenu.rdbuf());
+
+        Menu menu(&sistema);
+        menu.procesarOpcionElegida(3);
+
+        std::cin.rdbuf(entradaOriginal);
+        std::cout.rdbuf(salidaOriginal);
+
+        verificar(contiene(salidaMenu.str(), "hay un viaje en curso"),
+                  "la opcion 3 informa el bloqueo por viaje en curso");
+        verificar(!contiene(salidaMenu.str(), "No existe una estacion"),
+                  "la opcion 3 no confunde un bloqueo con una estacion inexistente");
+        verificar(sistema.buscarBicicletaPorId(10) != nullptr,
+                  "la estacion y su bicicleta siguen existiendo tras el bloqueo");
+    }
+
     std::cout << "\n=== A.4 listar estaciones ordenadas ===\n";
     {
         SistemaBicis sistema;
