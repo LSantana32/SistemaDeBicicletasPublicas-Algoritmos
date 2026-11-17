@@ -247,6 +247,28 @@ int main() {
     verificar(altura.find("Altura del arbol de bicicletas: 3") != std::string::npos,
               "mostrarAlturaDelArbol informa la altura del ABB");
 
+    std::string consulta = capturarSalida([&sistema]() {
+        sistema.mostrarInformacionDeEstacionPorCodigo("TST");
+    });
+    verificar(consulta.find("Bicis disponibles: 8") != std::string::npos,
+              "agregarBicicleta incrementa las bicis disponibles de la estacion");
+
+    verificar(sistema.eliminarBicicleta(2),
+              "se puede eliminar una bicicleta del ABB");
+    consulta = capturarSalida([&sistema]() {
+        sistema.mostrarInformacionDeEstacionPorCodigo("TST");
+    });
+    verificar(consulta.find("Bicis disponibles: 7") != std::string::npos,
+              "eliminarBicicleta decrementa las bicis disponibles de la estacion");
+
+    verificar(!sistema.eliminarBicicleta(99),
+              "eliminar una bicicleta inexistente devuelve false");
+    consulta = capturarSalida([&sistema]() {
+        sistema.mostrarInformacionDeEstacionPorCodigo("TST");
+    });
+    verificar(consulta.find("Bicis disponibles: 7") != std::string::npos,
+              "una eliminacion inexistente no altera las bicis disponibles");
+
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;
 }

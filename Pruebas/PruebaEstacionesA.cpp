@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+#include "../Sistema/Menu.h"
 #include "../Sistema/SistemaBicis.h"
 
 static int fallas = 0;
@@ -70,6 +71,30 @@ int main() {
             sistema.mostrarInformacionDeEstacionPorCodigo("ZZZ");
         });
         verificar(contiene(salida, "no encontrada"), "avisa cuando el codigo no existe");
+    }
+
+    std::cout << "\n=== Menu: alta de estacion sin bicicletas fantasma ===\n";
+    {
+        SistemaBicis sistema;
+        std::istringstream entrada("NUE\nNueva\nCentro\n5\n3\n");
+        std::ostringstream salidaMenu;
+        std::streambuf* entradaOriginal = std::cin.rdbuf(entrada.rdbuf());
+        std::streambuf* salidaOriginal = std::cout.rdbuf(salidaMenu.rdbuf());
+
+        Menu menu(&sistema);
+        menu.procesarOpcionElegida(2);
+
+        std::cin.rdbuf(entradaOriginal);
+        std::cout.rdbuf(salidaOriginal);
+
+        verificar(contiene(salidaMenu.str(), "se crea sin bicicletas"),
+                  "la opcion 2 avisa cuando se ingresan bicicletas disponibles");
+
+        std::string salida = capturarSalida([&] {
+            sistema.mostrarInformacionDeEstacionPorCodigo("NUE");
+        });
+        verificar(contiene(salida, "Bicis disponibles: 0"),
+                  "la estacion creada por el menu queda con 0 bicis disponibles");
     }
 
     std::cout << "\n=== A.4 listar estaciones ordenadas ===\n";

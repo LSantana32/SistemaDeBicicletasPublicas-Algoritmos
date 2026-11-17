@@ -49,7 +49,7 @@ int main() {
     std::cout << "\n=== Integracion: SistemaBicis ===\n";
 
     SistemaBicis sistema;
-    sistema.agregarEstacion(new Estacion("TST", "Test", "Centro", 5, 1));
+    sistema.agregarEstacion(new Estacion("TST", "Test", "Centro", 5, 0));
     sistema.agregarBicicleta(10, "TST", "Mecanica", "OK", 100);
 
     Bicicleta* bici = sistema.buscarBicicletaPorId(10);

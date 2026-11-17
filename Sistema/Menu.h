@@ -19,7 +19,7 @@ class Menu {
 
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Entrada invalida. " << mensaje;
+                std::cout << "Entrada invalida.\n" << mensaje;
             }
 
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -160,6 +160,13 @@ class Menu {
                     int capacidad = leerEnteroPositivo("Capacidad de anclajes: ");
                     int disponibles = leerEnteroEnRango(
                         "Bicicletas disponibles: ", 0, capacidad);
+
+                    if (disponibles > 0) {
+                        std::cout << "La estacion se crea sin bicicletas registradas. "
+                                    "Agreguelas con la opcion 11.\n";
+                        disponibles = 0;
+                    }
+
                     sistema->agregarEstacion(
                         new Estacion(codigo, nombre, barrio, capacidad, disponibles));
                     break;

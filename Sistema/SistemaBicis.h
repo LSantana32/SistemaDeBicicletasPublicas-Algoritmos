@@ -73,7 +73,7 @@ class SistemaBicis {
                 int kilometros;
 
                 if (flujo >> id >> codigoEstacion >> tipo >> estado >> kilometros) {
-                    agregarBicicleta(id, codigoEstacion, tipo, estado, kilometros);
+                    agregarBicicleta(id, codigoEstacion, tipo, estado, kilometros, false);
                 }
             }
 
@@ -133,7 +133,7 @@ class SistemaBicis {
             std::cout << "Estacion " << codigo << " agregada.\n";
         }
 
-        void agregarBicicleta(int id, std::string codigoEstacion, std::string tipo, std::string estado, int kilometros) {
+        void agregarBicicleta(int id, std::string codigoEstacion, std::string tipo, std::string estado, int kilometros, bool actualizarEstacion = true) {
             Estacion* estacion = nullptr;
             if (!estaciones.buscar(codigoEstacion, estacion)) {
                 std::cout << "No se pudo agregar la bicicleta " << id
@@ -152,6 +152,10 @@ class SistemaBicis {
                 return;
             }
 
+            if (actualizarEstacion) {
+                estacion->incrementarBicisDisponibles();
+            }
+
             std::cout << "Bicicleta " << id << " agregada.\n";
         }
 
@@ -159,6 +163,42 @@ class SistemaBicis {
             Estacion* estacion = nullptr;
             if (!estaciones.buscar(codigo, estacion)) {
                 return false;
+            }
+
+            int cantidadBicicletas = bicicletas.obtenerCantidad();
+
+            if (cantidadBicicletas > 0) {
+                Bicicleta** listaBicicletas = new Bicicleta*[cantidadBicicletas];
+                bicicletas.obtenerEnInorder(listaBicicletas);
+
+                for (int i = 0; i < cantidadBicicletas; i++) {
+                    Bicicleta* bicicleta = listaBicicletas[i];
+
+                    if (bicicleta != nullptr
+                        && bicicleta->getCodigoEstacion() == codigo) {
+                        if (bicicleta->estaEnTaller()) {
+                            taller.eliminar(bicicleta);
+                        }
+
+                        bicicletas.eliminar(bicicleta->getId());
+                    }
+                }
+
+                delete[] listaBicicletas;
+            }
+
+            int i = 0;
+            while (i < viajes.obtenerLargo()) {
+                Viaje* viaje = viajes.obtenerEnPosicion(i);
+
+                if (viaje != nullptr
+                    && (viaje->getEstacionOrigen() == codigo
+                        || viaje->getEstacionDestino() == codigo)) {
+                    viajes.eliminarEnPosicion(i);
+                    delete viaje;
+                } else {
+                    i++;
+                }
             }
 
             ciclovias.eliminarVertice(codigo);   
@@ -301,7 +341,9 @@ class SistemaBicis {
             }
 
             if (fechaDesde > fechaHasta) {
-                return true;
+                std::cout << "La fecha desde no puede ser mayor que la fecha hasta."
+                        << std::endl;
+                return false;
             }
 
             NodoLista<Viaje*>* actual = viajes.obtenerPrimero();
@@ -380,11 +422,23 @@ class SistemaBicis {
                 return false; 
             }
 
+            std::string codigoEstacion = bicicleta->getCodigoEstacion();
+
             if (bicicleta->estaEnTaller()) {
                 taller.eliminar(bicicleta);
             }
 
-            return bicicletas.eliminar(id);
+            if (!bicicletas.eliminar(id)) {
+                return false;
+            }
+
+            Estacion* estacion = nullptr;
+            if (estaciones.buscar(codigoEstacion, estacion)
+                && estacion != nullptr) {
+                estacion->decrementarBicisDisponibles();
+            }
+
+            return true;
         }
 
         void listarBicicletasOrdenadasPorId() {

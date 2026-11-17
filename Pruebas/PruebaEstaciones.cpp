@@ -1,6 +1,7 @@
 // Prueba de agregar y eliminar estaciones en SistemaBicis.
 // Compilar desde la carpeta del proyecto:
 #include <iostream>
+#include <sstream>
 #include <string>
 #include "../Sistema/SistemaBicis.h"
 
@@ -13,6 +14,15 @@ static void verificar(bool condicion, std::string descripcion) {
         std::cout << "[FALLA] " << descripcion << "\n";
         fallas++;
     }
+}
+
+template <class Funcion>
+static std::string capturarSalida(Funcion funcion) {
+    std::ostringstream salida;
+    std::streambuf* original = std::cout.rdbuf(salida.rdbuf());
+    funcion();
+    std::cout.rdbuf(original);
+    return salida.str();
 }
 
 int main() {
@@ -37,6 +47,46 @@ int main() {
     sistema.mostrarEstadisticasDelHash();   // tiene que quedar 1 estacion (CAB)
 
     // CAB queda adentro: el destructor de SistemaBicis tiene que liberarla
+
+    std::cout << "\n=== Eliminacion de estacion: bicicletas y viajes ===\n";
+
+    {
+        SistemaBicis cascada;
+        cascada.agregarEstacion(new Estacion("AAA", "Origen", "Centro", 10, 2));
+        cascada.agregarEstacion(new Estacion("BBB", "Destino", "Centro", 10, 1));
+        cascada.agregarBicicleta(1, "AAA", "Mecanica", "Averiada", 100);
+        cascada.agregarBicicleta(2, "AAA", "Mecanica", "OK", 100);
+        cascada.agregarBicicleta(3, "BBB", "Mecanica", "OK", 100);
+        cascada.enviarBicicletaAlTaller(1, 2);
+
+        cascada.agregarViaje(new Viaje(1, 2, 111, "AAA", "BBB", 20260101, 10));
+        cascada.agregarViaje(new Viaje(2, 3, 222, "BBB", "AAA", 20260102, 10));
+        cascada.agregarViaje(new Viaje(3, 3, 111, "BBB", "BBB", 20260103, 10));
+
+        verificar(cascada.eliminarEstacion("AAA"),
+                  "una estacion con bicicletas y viajes se puede eliminar");
+        verificar(cascada.buscarBicicletaPorId(1) == nullptr
+                      && cascada.buscarBicicletaPorId(2) == nullptr,
+                  "eliminarEstacion quita del ABB las bicicletas de la estacion");
+        verificar(cascada.obtenerCantidadEnTaller() == 0,
+                  "eliminarEstacion quita del taller las bicicletas de la estacion");
+        verificar(cascada.buscarBicicletaPorId(3) != nullptr,
+                  "las bicicletas de otras estaciones se conservan");
+
+        std::string salida = capturarSalida([&cascada]() {
+            cascada.mostrarViajesYMinutosDeUsuario(111);
+        });
+        verificar(salida.find("ID del viaje: 3") != std::string::npos
+                      && salida.find("ID del viaje: 1") == std::string::npos,
+                  "eliminarEstacion borra los viajes con origen en la estacion");
+
+        salida = capturarSalida([&cascada]() {
+            cascada.mostrarViajesYMinutosDeUsuario(222);
+        });
+        verificar(salida.find("No se encontraron viajes") != std::string::npos,
+                  "eliminarEstacion borra los viajes con destino en la estacion");
+    }
+
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;
 }

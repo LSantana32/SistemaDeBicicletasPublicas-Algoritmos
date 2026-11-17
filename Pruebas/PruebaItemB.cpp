@@ -61,12 +61,16 @@ int main() {
               "cuenta los viajes de PLZ en el rango, incluidos los extremos");
 
     cantidad = -1;
-    ok = sistema.contarViajesDesdeEstacionEnRango(
-        "PLZ", 20260313, 20260310, cantidad);
-    verificar(ok && cantidad == 0, "un rango invertido devuelve 0");
+    std::string salida = capturarSalida([&]() {
+        ok = sistema.contarViajesDesdeEstacionEnRango(
+            "PLZ", 20260313, 20260310, cantidad);
+    });
+    verificar(!ok && cantidad == 0
+                  && salida.find("no puede ser mayor") != std::string::npos,
+              "un rango invertido se informa como error");
 
     cantidad = -1;
-    std::string salida = capturarSalida([&]() {
+    salida = capturarSalida([&]() {
         ok = sistema.contarViajesDesdeEstacionEnRango(
             "ZZZ", 20260310, 20260312, cantidad);
     });

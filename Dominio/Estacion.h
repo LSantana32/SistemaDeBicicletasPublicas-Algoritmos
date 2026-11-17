@@ -48,6 +48,16 @@ public:
 
     int getBicisDisponibles() { return bicisDisponibles; }
 
+    void incrementarBicisDisponibles() {
+        bicisDisponibles++;
+    }
+
+    void decrementarBicisDisponibles() {
+        if (bicisDisponibles > 0) {
+            bicisDisponibles--;
+        }
+    }
+
     bool hayBicicletasDisponibles() {
         return bicisDisponibles > 0;
     }
