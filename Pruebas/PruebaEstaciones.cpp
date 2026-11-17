@@ -87,6 +87,37 @@ int main() {
                   "eliminarEstacion borra los viajes con destino en la estacion");
     }
 
+    std::cout << "\n=== Eliminacion bloqueada por viaje en curso ===\n";
+
+    {
+        SistemaBicis enCurso;
+        enCurso.agregarEstacion(new Estacion("VIA", "Viaje", "Centro", 5, 1));
+        enCurso.agregarBicicleta(10, "VIA", "Mecanica", "OK", 100);
+        enCurso.retirarBicicleta("VIA", 123, 20260101);
+
+        bool eliminada = true;
+        std::string salida = capturarSalida([&]() {
+            eliminada = enCurso.eliminarEstacion("VIA");
+        });
+        verificar(!eliminada
+                      && salida.find("hay un viaje en curso") != std::string::npos,
+                  "no se elimina una estacion con un viaje en curso");
+
+        salida = capturarSalida([&]() {
+            enCurso.mostrarInformacionDeEstacionPorCodigo("VIA");
+        });
+        verificar(salida.find("Codigo: VIA") != std::string::npos,
+                  "la estacion bloqueada sigue existiendo");
+        verificar(enCurso.buscarBicicletaPorId(10) != nullptr,
+                  "la bicicleta del viaje en curso sigue existiendo");
+
+        enCurso.devolverBicicleta("VIA", 123, 10, 5);
+        verificar(enCurso.eliminarEstacion("VIA"),
+                  "al terminar el viaje la estacion se puede eliminar");
+        verificar(enCurso.buscarBicicletaPorId(10) == nullptr,
+                  "eliminar la estacion quita la bicicleta que estaba en ella");
+    }
+
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");
     return fallas == 0 ? 0 : 1;
 }

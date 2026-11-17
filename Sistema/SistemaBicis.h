@@ -29,6 +29,9 @@ class SistemaBicis {
             taller() {
         }
 
+        SistemaBicis(const SistemaBicis&) = delete;
+        SistemaBicis& operator=(const SistemaBicis&) = delete;
+
         void cargarDatosDesdeArchivos() {
             std::ifstream archivoEstaciones("Archivos/estaciones.txt");
             std::string linea;
@@ -163,6 +166,21 @@ class SistemaBicis {
             Estacion* estacion = nullptr;
             if (!estaciones.buscar(codigo, estacion)) {
                 return false;
+            }
+
+            NodoLista<Viaje*>* actualViaje = viajes.obtenerPrimero();
+            while (actualViaje != nullptr) {
+                Viaje* viaje = actualViaje->getDato();
+
+                if (viaje != nullptr
+                    && viaje->getEstacionOrigen() == codigo
+                    && viaje->getEstacionDestino() == "") {
+                    std::cout << "No se puede eliminar la estacion " << codigo
+                            << ": hay un viaje en curso que comenzo en ella.\n";
+                    return false;
+                }
+
+                actualViaje = actualViaje->getSiguiente();
             }
 
             int cantidadBicicletas = bicicletas.obtenerCantidad();

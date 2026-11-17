@@ -82,7 +82,7 @@ int main() {
               "se informa cuando no existe ninguna combinacion");
 
     std::string codigosPoda[] = {"AAA", "BBB", "CCC", "DDD"};
-    int faltantesPoda[] = {6, 5, 4};
+    int faltantesPoda[] = {6, 5, 4, 3};
     salida = capturarSalida([&sistema, &codigosPoda, &faltantesPoda]() {
         sistema.planificarRedistribucion(10, codigosPoda, faltantesPoda, 4);
     });

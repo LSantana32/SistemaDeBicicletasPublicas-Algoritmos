@@ -52,6 +52,9 @@ class Grafo {
             this->cantidadVertices = cantidadVertices;
         }
 
+        Grafo(const Grafo<T>&) = delete;
+        Grafo<T>& operator=(const Grafo<T>&) = delete;
+
         void agregarVertice(T dato) {
             if (existeVertice(dato)) { // Si el vértice ya existe, no se agrega 
                 return;

@@ -19,6 +19,9 @@ class Lista {
             this->largo = largo;
         }
 
+        Lista(const Lista<T>&) = delete;
+        Lista<T>& operator=(const Lista<T>&) = delete;
+
         void vaciar() {
             NodoLista<T>* actual = primero;
             while (actual != nullptr) {

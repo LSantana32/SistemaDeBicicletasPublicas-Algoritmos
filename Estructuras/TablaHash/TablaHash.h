@@ -46,6 +46,9 @@ public:
         }
     }
 
+    TablaHash(const TablaHash<V>&) = delete;
+    TablaHash<V>& operator=(const TablaHash<V>&) = delete;
+
     bool insertar(std::string clave, V dato)  
     {
         if (capacidad <= 0 || tabla == nullptr)

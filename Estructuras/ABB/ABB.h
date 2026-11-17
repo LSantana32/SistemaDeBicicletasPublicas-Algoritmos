@@ -179,6 +179,9 @@ class ABB {
             this->cantidad = cantidad;
         }
 
+        ABB(const ABB<K, V>&) = delete;
+        ABB<K, V>& operator=(const ABB<K, V>&) = delete;
+
         bool insertar(K clave, V dato) {
             bool insertado = false;
             raiz = insertarRecursivo(raiz, clave, dato, insertado);
