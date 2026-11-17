@@ -30,7 +30,17 @@ class Viaje {
 
         std::string getEstacionOrigen() { return estacionOrigen; }
 
+        std::string getEstacionDestino() { return estacionDestino; }
+
+        void setEstacionDestino(std::string destino) { estacionDestino = destino; }
+
+        void setDuracionMin(int duracion) { duracionMin = duracion; }
+
         int getDuracionMin() { return duracionMin; }
+
+        int getId() { return id; }
+
+        int getIdBici() { return idBici; }
 
         void mostrarInformacion() { 
             std::cout << "ID del viaje: " << id << '\n';

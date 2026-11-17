@@ -19,6 +19,9 @@ class Lista {
             this->largo = largo;
         }
 
+        Lista(const Lista<T>&) = delete;
+        Lista<T>& operator=(const Lista<T>&) = delete;
+
         void vaciar() {
             NodoLista<T>* actual = primero;
             while (actual != nullptr) {
@@ -120,6 +123,21 @@ class Lista {
         bool estaVacia() const { return primero == nullptr; }
 
         int obtenerLargo() const { return largo; }
+
+        T obtenerUltimoViajeDe(int dni){
+            NodoLista<T>* actual = primero;
+            T ultimoViaje = T();
+
+            while (actual != nullptr) {
+                T viaje = actual->getDato();
+                if (viaje != nullptr && viaje->getDniUsuario() == dni) {
+                    ultimoViaje = viaje;
+                }
+                actual = actual->getSiguiente();
+            }
+
+            return ultimoViaje;
+        }
 
         ~Lista() {
             vaciar();

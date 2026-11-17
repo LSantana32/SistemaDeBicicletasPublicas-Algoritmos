@@ -17,6 +17,8 @@ int main() {
     );
 
     SistemaBicis sistema;
+    sistema.agregarEstacion(new Estacion("PLZ", "Plaza", "Centro", 30, 12));
+    sistema.agregarEstacion(new Estacion("CAB", "Caballito", "Centro", 25, 4));
     sistema.agregarViaje(viaje1);
     sistema.agregarViaje(viaje2);
     sistema.agregarViaje(viaje3);
@@ -28,16 +30,20 @@ int main() {
     sistema.mostrarViajesYMinutosDeUsuario(11111111);
 
     std::cout << "\n=== Viajes desde PLZ entre el 10 y el 12 ===\n";
-    std::cout << "Cantidad: "
-      << sistema.contarViajesDesdeEstacionEnRango(
-             "PLZ", 20260310, 20260312)
-      << '\n';
+    int cantidad = 0;
+
+    if (sistema.contarViajesDesdeEstacionEnRango(
+            "PLZ", 20260310, 20260312, cantidad)) {
+        std::cout << "Cantidad: " << cantidad << '\n';
+    }
 
     std::cout << "\n=== Viajes desde CAB entre el 10 y el 12 ===\n";
-    std::cout << "Cantidad: "
-      << sistema.contarViajesDesdeEstacionEnRango(
-             "CAB", 20260310, 20260312)
-      << '\n';
+    cantidad = 0;
+
+    if (sistema.contarViajesDesdeEstacionEnRango(
+            "CAB", 20260310, 20260312, cantidad)) {
+        std::cout << "Cantidad: " << cantidad << '\n';
+    }
 
     return 0;
 }

@@ -14,14 +14,21 @@ private:
     int cantidad;
     int colisiones;
 
-    int funcionHash(std::string clave)  //folding hash -> dividir la clave en partes y hacer xor entre ellas
+    int funcionHash(const std::string& clave)  //folding hash -> dividir la clave en partes y hacer xor entre ellas
     {
         if (capacidad <= 0)
         {
             return 0;
         }
-        int parte1 = (unsigned char)clave[0]; //ascii
-        int parte2 = ((unsigned char)clave[1] << 8) | (unsigned char)clave[2];  // caracter 2 * 256 + caracter 3
+
+        int parte1 = clave.size() > 0 ? (unsigned char)clave[0] : 0;
+        int parte2 = clave.size() > 1 ? ((unsigned char)clave[1] << 8) : 0;
+
+        if (clave.size() > 2)
+        {
+            parte2 |= (unsigned char)clave[2];
+        }
+
         int plegado = parte1 ^ parte2; //xor (diferencia de bits)
         return plegado % capacidad;
     }
@@ -38,6 +45,9 @@ public:
             this->tabla[i] = nullptr;
         }
     }
+
+    TablaHash(const TablaHash<V>&) = delete;
+    TablaHash<V>& operator=(const TablaHash<V>&) = delete;
 
     bool insertar(std::string clave, V dato)  
     {

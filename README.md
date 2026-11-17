@@ -111,17 +111,23 @@ CAB PAL
 
 El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo, selección o inserción.
 
-**Análisis requerido:**
-- Cantidad de colisiones de la tabla hash con los datos de prueba.
-- Factor de carga final de la tabla hash.
+**Análisis de la tabla hash**
+
+La clave se pliega tomando los tres caracteres del código (dos de ellos como un valor de 16 bits) y aplicando XOR; luego se calcula el módulo de la capacidad de la tabla (101 cubetas). La resolución de colisiones es por encadenamiento: cada cubeta apunta a una lista de nodos.
+
+Con los datos de prueba (`PLZ`, `PAL`, `CAB`, `RET`, `CON` y `BOE`) las cubetas obtenidas son 74, 3, 77, 96, 37 y 31 respectivamente, por lo que **no hubo colisiones (0)**.
+
+El factor de carga final es **6 / 101 = 0,0594 (5,94 %)**.
+
+Los códigos de estación se validan con exactamente 3 caracteres, tanto desde el menú como en `SistemaBicis::agregarEstacion`, que es el formato que asume la función hash.
 
 ### B. Viajes y colas de espera
 
-- Calcular la cantidad de viajes que salieron de una estación dentro de un rango de fechas.
+- Calcular la cantidad de viajes que salieron de una estación dentro de un rango de fechas. Se valida que la estación de origen exista.
 - Buscar todos los viajes de un usuario por su DNI y calcular el total de minutos pedaleados.
-- Listar las bicicletas que superen una cantidad de kilómetros indicada por el usuario.
-- Implementar una cola de espera por estación para asignar bicicletas a los usuarios en orden de llegada.
-- Implementar una cola de prioridad mediante un min-heap para gestionar las bicicletas averiadas que ingresan al taller.
+- Listar las bicicletas que superen una cantidad de kilómetros indicada por el usuario. Al devolver una bicicleta se suman los kilómetros recorridos informados por el usuario.
+- Implementar una cola de espera por estación para asignar bicicletas a los usuarios en orden de llegada. Un mismo DNI no puede encolarse dos veces.
+- Implementar una cola de prioridad mediante un min-heap para gestionar las bicicletas averiadas que ingresan al taller. No se admite ingresar dos veces la misma bicicleta; si se elimina una bicicleta del ABB, también se la quita del taller.
 
 **Análisis de complejidad temporal y estructuras de datos**
 
@@ -129,13 +135,31 @@ El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo,
 
 **Complejidad temporal:** \(O(n)\)
 
-Se eligió una lista enlazada para almacenar los viajes porque permite recorrerlos secuencialmente sin modificar la estructura existente del sistema. Como no existe un índice que permita acceder directamente a los viajes de un usuario por su DNI, es necesario recorrer la lista completa para encontrar todos los viajes correspondientes y sumar sus duraciones. Por este motivo, la complejidad temporal es \(O(n)\), donde \(n\) representa la cantidad total de viajes almacenados.
+Se utiliza una lista enlazada para almacenar los viajes, ya que permite recorrerlos secuencialmente sin necesidad de índices adicionales. Como no existe un índice por estación de origen y fecha, en el peor caso hay que recorrer todos los viajes comparando la estación y el rango de fechas, por lo que la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
 
 **2. Viajes de un usuario por DNI y total de minutos pedaleados**
 
 **Complejidad temporal:** \(O(n)\)
 
-Se reutilizó la lista enlazada de viajes existente, ya que permite examinar cada registro y comprobar si cumple con las condiciones de estación de origen y rango de fechas. Como no se dispone de un índice organizado por estación y fecha, en el peor caso es necesario recorrer todos los viajes para obtener la cantidad solicitada. Por lo tanto, la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
+Se reutiliza la lista enlazada de viajes: se recorre cada registro comparando el DNI y, cuando coincide, se acumula la duración del viaje. Al no disponer de un índice por DNI, en el peor caso es necesario visitar todos los viajes, por lo que la complejidad temporal es \(O(n)\), donde \(n\) es la cantidad total de viajes almacenados.
+
+**3. Bicicletas con más de X kilómetros**
+
+**Complejidad temporal:** \(O(b)\)
+
+Las bicicletas se almacenan en un árbol binario de búsqueda. Para listarlas se obtiene el recorrido *inorder* en un arreglo, que visita cada nodo una vez, y luego se filtra por kilómetros con un recorrido lineal adicional. Ambas pasadas son \(O(b)\), donde \(b\) es la cantidad total de bicicletas, por lo que el costo total es \(O(b)\). La actualización de kilómetros al devolver una bicicleta es \(O(1)\).
+
+**4. Cola de espera por estación (retiro y devolución)**
+
+**Complejidad temporal:** retirar \(O(b + n + k)\) y devolver \(O(b + n)\) en el peor caso; desencolar \(O(1)\); encolar \(O(k)\), donde \(k\) es la cantidad de usuarios en espera, porque se verifica que el DNI no esté repetido.
+
+Cada estación tiene su propia cola enlazada FIFO. Desencolar es \(O(1)\); encolar recorre la cola para evitar DNI duplicados, por lo que es \(O(k)\). El retiro y la devolución combinan la búsqueda de la estación en la tabla hash (\(O(1)\) promedio), el recorrido de la lista de viajes para detectar un viaje en curso \(O(n)\), la búsqueda de la bicicleta en el ABB (\(O(b)\) en el peor caso) y la inserción al final de la lista de viajes \(O(n)\). Por eso el costo total es \(O(b + n)\) para la devolución y \(O(b + n + k)\) para el retiro, con \(b\) bicicletas, \(n\) viajes y \(k\) usuarios en espera.
+
+**5. Taller de reparaciones (min-heap)**
+
+**Complejidad temporal:** insertar \(O(b + log m)\) y extraer la más urgente \(O(log m)\).
+
+El taller solo necesita insertar una bicicleta averiada y extraer la más urgente. Insertar requiere ubicar la bicicleta en el ABB por ID (\(O(b)\) en el peor caso) y luego subir el elemento en el heap \(O(log m)\); extraer la más urgente baja el elemento desde la raíz \(O(log m)\), donde \(m\) es la cantidad de bicicletas en el taller. Con una lista ordenada, insertar costaría \(O(n)\); con una desordenada, extraer la más urgente costaría \(O(n)\).
 
 **Prioridades del taller:**
 
@@ -145,10 +169,6 @@ Se reutilizó la lista enlazada de viajes existente, ya que permite examinar cad
 - Las bicicletas eléctricas averiadas ingresan siempre con prioridad 1.
 
 La cola de prioridad debe permitir insertar una bicicleta y extraer la más urgente.
-
-**Análisis requerido:**
-
-Para cada punto, indicar la complejidad temporal en notación Big O y explicar en dos o tres oraciones por qué se eligió esa estructura de datos.
 
 ### C. Registro de bicicletas con árbol binario de búsqueda
 
@@ -166,6 +186,38 @@ Funcionalidades:
 **Análisis requerido:**
 
 Explicar qué altura tendría el árbol si las bicicletas se cargaran ordenadas por ID y cómo afectaría esto al costo de búsqueda. Incluir un ejemplo con cinco bicicletas.
+
+Si las bicicletas se cargan ordenadas por ID, cada una es mayor que todas las anteriores, así que siempre se inserta como hijo derecho del último nodo. Por lo tanto, si todos los nodos forman una sola rama hacia la derecha, como una lista enlazada, su altura es igual a la cantidad de bicicletas. El peor caso en la búsqueda va a ser de O(n).
+
+Ejemplo con cinco bicicletas cargadas en el orden 501, 502, 503, 504, 505:
+
+```
+501
+   \
+   502
+      \
+      503
+         \
+         504
+            \
+            505
+```
+
+La altura es 5, con una bicicleta por nivel. Para buscar la 505 hay que comparar contra las cinco
+
+Si las mismas cinco bicicletas se cargan en otro orden, por ejemplo 503, 501, 504, 502, 505, el árbol queda repartido a los dos lados de la raíz:
+
+```
+        503
+       /   \
+    501     504
+       \       \
+       502     505
+```
+
+La altura baja a 3 y cualquier búsqueda hace como máximo 3 comparaciones.
+
+En un árbol balanceado la altura crece como O(log<sub>2</sub> n) y la búsqueda es O(log n): con 1.000 bicicletas serían unas 10 comparaciones en vez de 1.000.
 
 **Funcionalidad opcional:**
 
@@ -210,6 +262,26 @@ Las soluciones son:
 - `{PLZ, RET, CON}`
 - `{PLZ, CON, BOE}`
 
+
+**Complejidad temporal**
+
+La complejidad temporal del algoritmo en el peor caso es O(2ⁿ), donde n representa la cantidad de estaciones disponibles.
+
+Esto se debe a que el algoritmo utiliza la tecnica de backtracking para evaluar que estaciones deben formar parte de la solucion. Para cada estacion existen dos posibilidades: incluirla en el subconjunto o excluirla. Por lo tanto, a medida que se procesan las estaciones, la cantidad de combinaciones posibles se duplica.
+
+En el peor caso, el algoritmo debe explorar todos los subconjuntos posibles para determinar cuales cumplen con la condicion de que la suma de bicicletas faltantes sea exactamente igual a la capacidad del camion. La cantidad total de subconjuntos de un conjunto de n elementos es \(2^n\), por lo que esa es la complejidad temporal del algoritmo.
+
+Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma actual supera la capacidad del camion, se descarta esa rama de busqueda porque ya no puede generar una solución valida. También se deja de explorar cuando se alcanza el final de la lista de estaciones. Estas condiciones permiten reducir la cantidad de combinaciones evaluadas en determinados casos, aunque no modifican la complejidad del peor caso, que continua siendo \(O(2^n)\).
+
+## Descripción de los módulos
+
+- `Dominio/`: clases del modelo de negocio (`Estacion`, `Bicicleta` y `Viaje`).
+- `Estructuras/`: implementaciones propias de las estructuras de datos (`Lista`, `Cola`, `Grafo`, `ABB`, `HeapMin`, `TablaHash` y `Redistribuidor`).
+- `Sistema/`: `SistemaBicis`, con la lógica central del sistema, y `Menu`, con la interfaz por consola y la validación de las entradas.
+- `Pruebas/`: programas de prueba de cada estructura y de la integración del sistema.
+- `Archivos/`: archivos de datos de entrada (`estaciones.txt`, `bicicletas.txt`, `viajes.txt` y `ciclovias.txt`).
+- `main.cpp`: punto de entrada que carga los datos y abre el menú.
+
 ## Condiciones de entrega
 
 - Exposición de avances cada dos semanas, con el código funcionando.
@@ -222,4 +294,31 @@ Las soluciones son:
 
 ## Compilación
 
-El programa debe compilar sin advertencias utilizando `g++` con C++17 y las opciones `
+El programa se compila con `g++` y C++17. Desde la carpeta raíz del proyecto:
+
+```bash
+g++ -std=c++17 -Wall -Wextra main.cpp -o sistema
+./sistema
+```
+
+El ejecutable lee los archivos de la carpeta `Archivos/`, por lo que debe ejecutarse desde la raíz del proyecto.
+
+## Pruebas
+
+Las pruebas se compilan indicando el archivo de la carpeta `Pruebas` y se ejecutan desde la raíz del proyecto:
+
+```bash
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaHash.cpp -o pruebaHash
+./pruebaHash
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaGrafo.cpp -o pruebaGrafo
+./pruebaGrafo
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstacionesA.cpp -o pruebaEstacionesA
+./pruebaEstacionesA
+
+g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
+./pruebaEstaciones
+```
+
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap`, `PruebaItemB`, `PruebaItemC` y `PruebaItemD`, que cubren las colas de espera, el taller, el ABB, el backtracking y los ítems B.1-B.3, C y D.

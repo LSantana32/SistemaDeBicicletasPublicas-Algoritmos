@@ -19,7 +19,7 @@ class Menu {
 
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Entrada invalida. " << mensaje;
+                std::cout << "Entrada invalida.\n" << mensaje;
             }
 
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -30,6 +30,67 @@ class Menu {
             std::string valor;
             std::cout << mensaje;
             std::getline(std::cin, valor);
+            return valor;
+        }
+
+        std::string leerCodigo(std::string mensaje) {
+            std::string valor = leerLinea(mensaje);
+
+            while (valor.length() != 3) {
+                if (std::cin.eof()) {
+                    return valor;
+                }
+
+                std::cout << "Codigo invalido. Debe tener exactamente 3 caracteres.\n";
+                valor = leerLinea(mensaje);
+            }
+
+            return valor;
+        }
+
+        int leerEnteroPositivo(std::string mensaje) {
+            int valor = leerEntero(mensaje);
+
+            while (valor <= 0) {
+                if (std::cin.eof()) {
+                    return valor;
+                }
+
+                std::cout << "Valor invalido. Debe ser mayor que 0.\n";
+                valor = leerEntero(mensaje);
+            }
+
+            return valor;
+        }
+
+        int leerEnteroNoNegativo(std::string mensaje) {
+            int valor = leerEntero(mensaje);
+
+            while (valor < 0) {
+                if (std::cin.eof()) {
+                    return valor;
+                }
+
+                std::cout << "Valor invalido. No puede ser negativo.\n";
+                valor = leerEntero(mensaje);
+            }
+
+            return valor;
+        }
+
+        int leerEnteroEnRango(std::string mensaje, int minimo, int maximo) {
+            int valor = leerEntero(mensaje);
+
+            while (valor < minimo || valor > maximo) {
+                if (std::cin.eof()) {
+                    return valor;
+                }
+
+                std::cout << "Valor invalido. Debe estar entre " << minimo
+                        << " y " << maximo << ".\n";
+                valor = leerEntero(mensaje);
+            }
+
             return valor;
         }
 
@@ -68,46 +129,53 @@ class Menu {
             std::cout << " 9. Contar viajes desde una estacion en un rango de fechas\n";
             std::cout << "10. Viajes y minutos pedaleados de un usuario\n";
             std::cout << "--- Bicicletas ---\n";
-            std::cout << "11. Buscar bicicleta por ID\n";
-            std::cout << "12. Listar bicicletas ordenadas por ID\n";
-            std::cout << "13. Contar bicicletas averiadas\n";
-            std::cout << "14. Listar bicicletas con mas de X kilometros\n";
-            std::cout << "15. Mostrar altura del arbol de bicicletas\n";
+            std::cout << "11. Agregar bicicleta\n";
+            std::cout << "12. Buscar bicicleta por ID\n";
+            std::cout << "13. Listar bicicletas ordenadas por ID\n";
+            std::cout << "14. Contar bicicletas averiadas\n";
+            std::cout << "15. Listar bicicletas con mas de X kilometros\n";
+            std::cout << "16. Mostrar altura del arbol de bicicletas\n";
             std::cout << "--- Operaciones ---\n";
-            std::cout << "16. Retirar bicicleta de una estacion\n";
-            std::cout << "17. Devolver bicicleta en una estacion\n";
-            std::cout << "18. Enviar bicicleta al taller\n";
-            std::cout << "19. Reparar la siguiente bicicleta del taller\n";
-            std::cout << "20. Planificar redistribucion con el camion\n";
+            std::cout << "17. Retirar bicicleta de una estacion\n";
+            std::cout << "18. Devolver bicicleta en una estacion\n";
+            std::cout << "19. Enviar bicicleta al taller\n";
+            std::cout << "20. Reparar la siguiente bicicleta del taller\n";
+            std::cout << "21. Planificar redistribucion con el camion\n";
+            std::cout << "22. Eliminar bicicleta del arbol\n";
             std::cout << " 0. Salir\n";
         }
 
         void procesarOpcionElegida(int opcion) {
             switch (opcion) {
                 case 1: {
-                    std::string codigo = leerLinea("Codigo de la estacion: ");
+                    std::string codigo = leerCodigo("Codigo de la estacion: ");
                     sistema->mostrarInformacionDeEstacionPorCodigo(codigo);
                     break;
                 }
 
                 case 2: {
-                    std::string codigo = leerLinea("Codigo (3 caracteres): ");
+                    std::string codigo = leerCodigo("Codigo (3 caracteres): ");
                     std::string nombre = leerLinea("Nombre: ");
                     std::string barrio = leerLinea("Barrio: ");
-                    int capacidad = leerEntero("Capacidad de anclajes: ");
-                    int disponibles = leerEntero("Bicicletas disponibles: ");
+                    int capacidad = leerEnteroPositivo("Capacidad de anclajes: ");
+                    int disponibles = leerEnteroEnRango(
+                        "Bicicletas disponibles: ", 0, capacidad);
+
+                    if (disponibles > 0) {
+                        std::cout << "La estacion se crea sin bicicletas registradas. "
+                                    "Agreguelas con la opcion 11.\n";
+                        disponibles = 0;
+                    }
+
                     sistema->agregarEstacion(
                         new Estacion(codigo, nombre, barrio, capacidad, disponibles));
                     break;
                 }
 
                 case 3: {
-                    std::string codigo = leerLinea("Codigo de la estacion a eliminar: ");
+                    std::string codigo = leerCodigo("Codigo de la estacion a eliminar: ");
                     if (sistema->eliminarEstacion(codigo)) {
                         std::cout << "Estacion " << codigo << " eliminada.\n";
-                    } else {
-                        std::cout << "No existe una estacion con codigo "
-                                << codigo << ".\n";
                     }
                     break;
                 }
@@ -125,8 +193,8 @@ class Menu {
                     break;
 
                 case 7: {
-                    std::string origen = leerLinea("Estacion de origen: ");
-                    std::string destino = leerLinea("Estacion de destino: ");
+                    std::string origen = leerCodigo("Estacion de origen: ");
+                    std::string destino = leerCodigo("Estacion de destino: ");
                     sistema->mostrarRecorridoMasCorto(origen, destino);
                     break;
                 }
@@ -136,12 +204,15 @@ class Menu {
                     break;
 
                 case 9: {
-                    std::string codigo = leerLinea("Codigo de la estacion de origen: ");
+                    std::string codigo = leerCodigo("Codigo de la estacion de origen: ");
                     int desde = leerEntero("Fecha desde (AAAAMMDD): ");
                     int hasta = leerEntero("Fecha hasta (AAAAMMDD): ");
-                    int cantidad = sistema->contarViajesDesdeEstacionEnRango(
-                        codigo, desde, hasta);
-                    std::cout << "Cantidad de viajes: " << cantidad << '\n';
+                    int cantidad = 0;
+
+                    if (sistema->contarViajesDesdeEstacionEnRango(
+                            codigo, desde, hasta, cantidad)) {
+                        std::cout << "Cantidad de viajes: " << cantidad << '\n';
+                    }
                     break;
                 }
 
@@ -153,6 +224,17 @@ class Menu {
 
                 case 11: {
                     int id = leerEntero("ID de la bicicleta: ");
+                    std::string codigoEstacion = leerCodigo("Codigo de la estacion: ");
+                    std::string tipo = leerLinea("Tipo: ");
+                    std::string estado = leerLinea("Estado: ");
+                    int kilometros = leerEntero("Kilometros: ");
+                    sistema->agregarBicicleta(
+                        id, codigoEstacion, tipo, estado, kilometros);
+                    break;
+                }
+
+                case 12: {
+                    int id = leerEntero("ID de la bicicleta: ");
                     Bicicleta* bicicleta = sistema->buscarBicicletaPorId(id);
                     if (bicicleta != nullptr) {
                         bicicleta->mostrarInformacion();
@@ -163,55 +245,58 @@ class Menu {
                     break;
                 }
 
-                case 12:
+                case 13:
                     sistema->listarBicicletasOrdenadasPorId();
                     break;
 
-                case 13:
+                case 14:
                     std::cout << "Bicicletas averiadas: "
                             << sistema->contarBicicletasAveriadas() << '\n';
                     break;
 
-                case 14: {
+                case 15: {
                     int kmMinimo = leerEntero("Kilometros minimos: ");
                     sistema->listarBicicletasConMasKm(kmMinimo);
                     break;
                 }
 
-                case 15:
+                case 16:
                     sistema->mostrarAlturaDelArbol();
                     break;
 
-                case 16: {
-                    std::string codigo = leerLinea("Codigo de la estacion: ");
-                    int dni = leerEntero("DNI del usuario: ");
-                    sistema->retirarBicicleta(codigo, dni);
-                    break;
-                }
-
                 case 17: {
-                    std::string codigo = leerLinea("Codigo de la estacion: ");
-                    sistema->devolverBicicleta(codigo);
+                    std::string codigo = leerCodigo("Codigo de la estacion: ");
+                    int dni = leerEntero("DNI del usuario: ");
+                    int fechaActual = leerEntero("Fecha actual (AAAAMMDD): ");
+                    sistema->retirarBicicleta(codigo, dni, fechaActual);
                     break;
                 }
 
                 case 18: {
+                    std::string codigo = leerCodigo("Codigo de la estacion: ");
+                    int dni = leerEntero("DNI del usuario: ");
+                    int duracion = leerEnteroNoNegativo("Duracion del viaje (minutos): ");
+                    int kilometros = leerEnteroNoNegativo("Kilometros recorridos: ");
+                    sistema->devolverBicicleta(codigo, dni, duracion, kilometros);
+                    break;
+                }
+
+                case 19: {
                     int id = leerEntero("ID de la bicicleta: ");
                     int prioridad = leerEntero("Prioridad (1 alta, 2 media, 3 baja): ");
                     sistema->enviarBicicletaAlTaller(id, prioridad);
                     break;
                 }
 
-                case 19:
+                case 20:
                     sistema->repararSiguienteBicicleta();
                     break;
 
-                case 20: {
-                    int capacidad = leerEntero("Capacidad del camion: ");
-                    int cantidad = leerEntero("Cantidad de estaciones: ");
+                case 21: {
+                    int capacidad = leerEnteroPositivo("Capacidad del camion: ");
+                    int cantidad = leerEnteroPositivo("Cantidad de estaciones: ");
 
-                    if (cantidad <= 0) {
-                        std::cout << "Cantidad de estaciones invalida.\n";
+                    if (capacidad <= 0 || cantidad <= 0) {
                         break;
                     }
 
@@ -221,7 +306,7 @@ class Menu {
                     for (int i = 0; i < cantidad; i++) {
                         std::cout << "Estacion " << (i + 1) << ":\n";
                         codigos[i] = leerLinea("  Codigo: ");
-                        faltantes[i] = leerEntero("  Bicicletas faltantes: ");
+                        faltantes[i] = leerEnteroPositivo("  Bicicletas faltantes: ");
                     }
 
                     sistema->planificarRedistribucion(
@@ -229,6 +314,14 @@ class Menu {
 
                     delete[] codigos;
                     delete[] faltantes;
+                    break;
+                }
+
+                case 22: {
+                    int id = leerEntero("ID de la bicicleta a eliminar: ");
+                    if (sistema->eliminarBicicleta(id)) {
+                        std::cout << "Bicicleta " << id << " eliminada.\n";
+                    }
                     break;
                 }
 

@@ -7,12 +7,15 @@ class ElementoHeap {
         int prioridad;
 
     public:
+
+        ElementoHeap() : dato(), prioridad(0) {}
+
         ElementoHeap(T dato, int prioridad) {
             this->dato = dato;
             this->prioridad = prioridad;
         }
 
-        T getDato() { return T(); }
+        T getDato() { return dato; }
 
-        int getPrioridad() { return 0; }
+        int getPrioridad() { return prioridad; }
 };

@@ -44,6 +44,20 @@ class Cola {
 
         T verPrimero() { return primero->getDato(); }
 
+        bool contiene(T dato) {
+            NodoCola<T>* actual = primero;
+
+            while (actual != nullptr) {
+                if (actual->getDato() == dato) {
+                    return true;
+                }
+
+                actual = actual->getSiguiente();
+            }
+
+            return false;
+        }
+
         bool estaVacia() { return largo == 0; }
 
         int obtenerLargo() { return largo; }

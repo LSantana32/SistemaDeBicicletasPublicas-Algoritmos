@@ -41,17 +41,66 @@ public:
             return 0.0;
         }
 
-        int ocupacion = capacidadAnclajes - bicisDisponibles;
-        double porcentaje = (ocupacion * 100) / capacidadAnclajes;
+        double porcentaje = (bicisDisponibles * 100.0) / capacidadAnclajes;
         
         return porcentaje; 
         }
 
     int getBicisDisponibles() { return bicisDisponibles; }
 
-    bool retirarBicicleta(int dni) { return false; }
+    void incrementarBicisDisponibles() {
+        bicisDisponibles++;
+    }
 
-    int devolverBicicleta() { return 0; }
+    void decrementarBicisDisponibles() {
+        if (bicisDisponibles > 0) {
+            bicisDisponibles--;
+        }
+    }
+
+    bool hayBicicletasDisponibles() {
+        return bicisDisponibles > 0;
+    }
+
+    bool usuarioEnEspera(int dni) {
+        return colaEspera.contiene(dni);
+    }
+
+    bool agregarAEspera(int dni) {
+        if (usuarioEnEspera(dni)) {
+            return false;
+        }
+
+        colaEspera.encolar(dni);
+        return true;
+    }
+
+    int obtenerCantidadEnEspera() {
+        return colaEspera.obtenerLargo();
+    }
+
+    bool retirarBicicleta(int dni) { 
+        if (bicisDisponibles > 0) {
+            bicisDisponibles--;
+            return true;
+        } else {
+            agregarAEspera(dni);
+            return false;
+        }
+    }
+
+    int devolverBicicleta() { 
+        if(!colaEspera.estaVacia()){
+            return colaEspera.desencolar();
+        }
+        
+        if (bicisDisponibles < capacidadAnclajes) {
+            bicisDisponibles++;
+            return -1; // Indica que no hay usuarios en espera
+        } else {
+            return -2; // Indica que la estacion esta llena
+        }
+    }
 
     void mostrarInformacion()
     {
