@@ -1,4 +1,4 @@
-# Diagrama de clases — Sistema de Bicicletas Públicas (v7)
+# Diagrama de clases — Sistema de Bicicletas Públicas (v8)
 
 > Para verlo en VS Code: abrí este archivo y usá **Ctrl+Shift+V** (Markdown Preview).
 > Mermaid viene soportado de forma nativa en VS Code (1.60+) → no requiere extensiones.
@@ -36,7 +36,7 @@ classDiagram
         +mostrarEstadisticasDelHash() void
         +contarViajesDesdeEstacionEnRango(string codigo, int fechaDesde, int fechaHasta, int& cantidad) bool
         +mostrarViajesYMinutosDeUsuario(int dni) void
-        +agregarBicicleta(int id, string codigoEstacion, string tipo, string estado, int kilometros) void
+        +agregarBicicleta(int id, string codigoEstacion, string tipo, string estado, int kilometros, bool actualizarEstacion = true) void
         +eliminarBicicleta(int id) bool
         +buscarBicicletaPorId(int id) Bicicleta*
         +listarBicicletasOrdenadasPorId() void
@@ -63,6 +63,8 @@ classDiagram
         +getCapacidadAnclajes() int
         +calcularPorcentajeOcupacion() double
         +getBicisDisponibles() int
+        +incrementarBicisDisponibles() void
+        +decrementarBicisDisponibles() void
         +hayBicicletasDisponibles() bool
         +usuarioEnEspera(int dni) bool
         +agregarAEspera(int dni) bool
