@@ -139,16 +139,16 @@ class SistemaBicis {
         void agregarBicicleta(int id, std::string codigoEstacion, std::string tipo, std::string estado, int kilometros, bool actualizarEstacion = true) {
             Estacion* estacion = nullptr;
 
-            if (actualizarEstacion && estacion->getBicisDisponibles() >= estacion->getCapacidadAnclajes()) { 
-                std::cout << "No se pudo agregar la bicicleta " << id
-                << ": la estacion " << codigoEstacion << " esta llena.\n";
-                return;
-            }
-
             if (!estaciones.buscar(codigoEstacion, estacion)) {
                 std::cout << "No se pudo agregar la bicicleta " << id
                         << ": la estacion " << codigoEstacion
                         << " no existe.\n";
+                return;
+            }
+
+            if (actualizarEstacion && estacion->getBicisDisponibles() >= estacion->getCapacidadAnclajes()) { 
+                std::cout << "No se pudo agregar la bicicleta " << id
+                << ": la estacion " << codigoEstacion << " esta llena.\n";
                 return;
             }
 
