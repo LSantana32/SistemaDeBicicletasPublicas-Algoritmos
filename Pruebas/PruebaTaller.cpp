@@ -21,7 +21,7 @@ static void verificar(bool condicion, std::string descripcion) {
 
 int main() {
     SistemaBicis sistema;
-    sistema.agregarEstacion(new Estacion("TST", "Test", "Centro", 5, 3));
+    sistema.agregarEstacion(new Estacion("TST", "Test", "Centro", 10, 3));
     sistema.agregarBicicleta(1, "TST", "Electrica", "Averiada", 1000);
     sistema.agregarBicicleta(2, "TST", "Mecanica", "Averiada", 2000);
     sistema.agregarBicicleta(4, "TST", "Mecanica", "Averiada", 3000);
