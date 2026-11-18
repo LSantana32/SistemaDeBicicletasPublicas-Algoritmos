@@ -203,7 +203,7 @@ Ejemplo con cinco bicicletas cargadas en el orden 501, 502, 503, 504, 505:
             505
 ```
 
-La altura es 5, con una bicicleta por nivel. Para buscar la 505 hay que comparar contra las cinco
+La altura es 5, con una bicicleta por nivel (se cuenta la cantidad de nodos; un árbol vacío tiene altura 0). Para buscar la 505 hay que comparar contra las cinco bicicletas.
 
 Si las mismas cinco bicicletas se cargan en otro orden, por ejemplo 503, 501, 504, 502, 505, el árbol queda repartido a los dos lados de la raíz:
 
@@ -282,6 +282,8 @@ Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma 
 - `Archivos/`: archivos de datos de entrada (`estaciones.txt`, `bicicletas.txt`, `viajes.txt` y `ciclovias.txt`).
 - `main.cpp`: punto de entrada que carga los datos y abre el menú.
 
+El diagrama de clases UML, con las relaciones de asociación y composición, se encuentra en [`Diagrama_UML.md`](Diagrama_UML.md).
+
 ## Condiciones de entrega
 
 - Exposición de avances cada dos semanas, con el código funcionando.
@@ -296,29 +298,48 @@ Ademas, nuestra implementacion cuenta con una condicion de poda: cuando la suma 
 
 El programa se compila con `g++` y C++17. Desde la carpeta raíz del proyecto:
 
-```bash
-g++ -std=c++17 -Wall -Wextra main.cpp -o sistema
-./sistema
+```powershell
+g++ -std=c++17 -Wall -Wextra main.cpp -o main
+.\main.exe
 ```
 
-El ejecutable lee los archivos de la carpeta `Archivos/`, por lo que debe ejecutarse desde la raíz del proyecto.
+El ejecutable lee los archivos de la carpeta `Archivos/`, por lo que debe ejecutarse desde la raíz del proyecto. En Linux o WSL se ejecuta con `./main`.
 
 ## Pruebas
 
-Las pruebas se compilan indicando el archivo de la carpeta `Pruebas` y se ejecutan desde la raíz del proyecto:
+Las pruebas se compilan indicando el archivo de la carpeta `Pruebas` y se ejecutan desde la raíz del proyecto. El siguiente script compila y ejecuta todas las pruebas:
 
 ```bash
-g++ -std=c++17 -Wall -Wextra Pruebas/PruebaHash.cpp -o pruebaHash
-./pruebaHash
-
-g++ -std=c++17 -Wall -Wextra Pruebas/PruebaGrafo.cpp -o pruebaGrafo
-./pruebaGrafo
-
-g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstacionesA.cpp -o pruebaEstacionesA
-./pruebaEstacionesA
-
-g++ -std=c++17 -Wall -Wextra Pruebas/PruebaEstaciones.cpp -o pruebaEstaciones
-./pruebaEstaciones
+for prueba in PruebaCola PruebaColaEspera PruebaEstacion PruebaEstaciones \
+    PruebaEstacionesA PruebaGrafo PruebaHash PruebaHeap PruebaIntegracion \
+    PruebaItemB PruebaItemC PruebaItemD PruebaTaller PruebaViajes PruebaViajes2; do
+    g++ -std=c++17 -Wall -Wextra "Pruebas/$prueba.cpp" -o "$prueba" || exit 1
+    "./$prueba" || exit 1
+done
 ```
 
-Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. También se incluyen `PruebaColaEspera`, `PruebaTaller`, `PruebaHeap`, `PruebaItemB`, `PruebaItemC` y `PruebaItemD`, que cubren las colas de espera, el taller, el ABB, el backtracking y los ítems B.1-B.3, C y D.
+Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando todas las verificaciones pasan. Cubren las estructuras de datos, las colas de espera, el taller, el ABB, el backtracking, los ítems B.1-B.3, C y D, y la integración general del sistema.
+
+## Verificación de memoria
+
+Valgrind se ejecuta sobre un binario de Linux, no sobre `main.exe`. Desde PowerShell, en la raíz del proyecto, compilá el binario dentro de WSL:
+
+```powershell
+wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "g++ -std=c++17 -Wall -Wextra -g main.cpp -o /tmp/main_valgrind"
+```
+
+Después ejecutalo con Valgrind de forma interactiva:
+
+```powershell
+wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
+```
+
+Usá el menú normalmente y salí con la opción `0` para que se ejecuten los destructores. Al finalizar, Valgrind debe informar `All heap blocks were freed -- no leaks are possible` y `ERROR SUMMARY: 0 errors`.
+
+Para una prueba rápida sin recorrer el menú:
+
+```powershell
+wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "printf '0\n' | valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
+```
+
+**Resultado con los datos de prueba:** verificado con `g++ 13.3.0` y Valgrind `3.22.0`. Tanto el programa principal (cargando los archivos y saliendo con `0`) como las 15 pruebas finalizaron con `All heap blocks were freed -- no leaks are possible` y `ERROR SUMMARY: 0 errors`, sin advertencias de compilación con `-Wall -Wextra`.
