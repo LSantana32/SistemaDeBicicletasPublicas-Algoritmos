@@ -164,8 +164,8 @@ int main() {
                   "informa que hay 6 estaciones");
         verificar(contiene(salida, "Colisiones: 0"),
                   "informa 0 colisiones con los datos de prueba");
-        verificar(contiene(salida, "Factor de carga: 0.059"),
-                  "informa un factor de carga de 6/101");
+        verificar(contiene(salida, "Factor de carga: 0.545"),
+                  "informa un factor de carga de 6/11");
     }
 
     std::cout << (fallas == 0 ? "\nTodo OK\n" : "\nHay pruebas que fallan\n");

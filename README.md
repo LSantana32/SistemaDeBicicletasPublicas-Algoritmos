@@ -113,11 +113,11 @@ El algoritmo de ordenamiento debe implementarse manualmente utilizando burbujeo,
 
 **Análisis de la tabla hash**
 
-La clave se pliega tomando los tres caracteres del código (dos de ellos como un valor de 16 bits) y aplicando XOR; luego se calcula el módulo de la capacidad de la tabla (101 cubetas). La resolución de colisiones es por encadenamiento: cada cubeta apunta a una lista de nodos.
+La clave se pliega tomando los tres caracteres del código (dos de ellos como un valor de 16 bits) y aplicando XOR; luego se calcula el módulo de la capacidad de la tabla (11 cubetas). La resolución de colisiones es por encadenamiento: cada cubeta apunta a una lista de nodos.
 
-Con los datos de prueba (`PLZ`, `PAL`, `CAB`, `RET`, `CON` y `BOE`) las cubetas obtenidas son 74, 3, 77, 96, 37 y 31 respectivamente, por lo que **no hubo colisiones (0)**.
+Con los datos de prueba (`PLZ`, `PAL`, `CAB`, `RET`, `CON` y `BOE`) las cubetas obtenidas son 7, 3, 9, 4, 8 y 2 respectivamente, por lo que **no hubo colisiones (0)**.
 
-El factor de carga final es **6 / 101 = 0,0594 (5,94 %)**.
+El factor de carga final es **6 / 11 = 0,5455 (54,55 %)**.
 
 Los códigos de estación se validan con exactamente 3 caracteres, tanto desde el menú como en `SistemaBicis::agregarEstacion`, que es el formato que asume la función hash.
 

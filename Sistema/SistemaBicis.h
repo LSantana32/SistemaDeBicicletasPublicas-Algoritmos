@@ -25,7 +25,7 @@ class SistemaBicis {
 
     public:
         SistemaBicis()
-            : estaciones(101), viajes(nullptr, 0), ciclovias(nullptr, 0), bicicletas(nullptr, 0), 
+            : estaciones(11), viajes(nullptr, 0), ciclovias(nullptr, 0), bicicletas(nullptr, 0), 
             taller() {
         }
 
