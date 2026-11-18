@@ -325,13 +325,13 @@ Las pruebas no imprimen advertencias de compilación y devuelven `0` cuando toda
 Valgrind se ejecuta sobre un binario de Linux, no sobre `main.exe`. Desde PowerShell, en la raíz del proyecto, compilá el binario dentro de WSL:
 
 ```powershell
-wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "g++ -std=c++17 -Wall -Wextra -g main.cpp -o /tmp/main_valgrind"
+wsl --cd "{ruta donde esta el proyecto}" -e bash -lc "g++ -std=c++17 -Wall -Wextra -g main.cpp -o /tmp/main_valgrind"
 ```
 
 Después ejecutalo con Valgrind de forma interactiva:
 
 ```powershell
-wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
+wsl --cd "{ruta donde esta el proyecto}" -e bash -lc "valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
 ```
 
 Usá el menú normalmente y salí con la opción `0` para que se ejecuten los destructores. Al finalizar, Valgrind debe informar `All heap blocks were freed -- no leaks are possible` y `ERROR SUMMARY: 0 errors`.
@@ -339,7 +339,7 @@ Usá el menú normalmente y salí con la opción `0` para que se ejecuten los de
 Para una prueba rápida sin recorrer el menú:
 
 ```powershell
-wsl --cd "C:\Users\Lauty\Documents\Facultad\Algoritmos\SistemaDeBicicletasPublicas-Algoritmos" -e bash -lc "printf '0\n' | valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
+wsl --cd "{ruta donde esta el proyecto}" -e bash -lc "printf '0\n' | valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=1 /tmp/main_valgrind"
 ```
 
 **Resultado con los datos de prueba:** verificado con `g++ 13.3.0` y Valgrind `3.22.0`. Tanto el programa principal (cargando los archivos y saliendo con `0`) como las 15 pruebas finalizaron con `All heap blocks were freed -- no leaks are possible` y `ERROR SUMMARY: 0 errors`, sin advertencias de compilación con `-Wall -Wextra`.
